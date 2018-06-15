@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Socialite", "Socialite\Socialite.csproj", "{09CC0654-D37F-45E9-AC5C-4A0089CCD1A9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{3CB8CB0A-2119-4953-BDF7-B48198FC007E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clark.Crawler", "..\..\Documents\Programming\Clark\Clark.Crawler\Clark.Crawler.csproj", "{39500000-FD93-4CC5-B96D-599C5A8400D0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{09CC0654-D37F-45E9-AC5C-4A0089CCD1A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09CC0654-D37F-45E9-AC5C-4A0089CCD1A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09CC0654-D37F-45E9-AC5C-4A0089CCD1A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09CC0654-D37F-45E9-AC5C-4A0089CCD1A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39500000-FD93-4CC5-B96D-599C5A8400D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39500000-FD93-4CC5-B96D-599C5A8400D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39500000-FD93-4CC5-B96D-599C5A8400D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39500000-FD93-4CC5-B96D-599C5A8400D0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{39500000-FD93-4CC5-B96D-599C5A8400D0} = {3CB8CB0A-2119-4953-BDF7-B48198FC007E}
+	EndGlobalSection
+EndGlobal
