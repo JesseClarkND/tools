@@ -1,1 +1,13 @@
 C:\Users\hogarth45\Documents\Programming\tools\ElDorado\ElDorado\ElDorado\bin\Debug\ElDorado.exe.config
+C:\Users\hogarth45\Documents\Programming\tools\ElDorado\bin\Debug\ElDorado.exe.config
+C:\Users\hogarth45\Documents\Programming\tools\ElDorado\bin\Debug\ElDorado.exe
+C:\Users\hogarth45\Documents\Programming\tools\ElDorado\bin\Debug\ElDorado.pdb
+C:\Users\hogarth45\Documents\Programming\tools\ElDorado\obj\Debug\ElDorado.csprojResolveAssemblyReference.cache
+C:\Users\hogarth45\Documents\Programming\tools\ElDorado\obj\Debug\ElDorado.Form1.resources
+C:\Users\hogarth45\Documents\Programming\tools\ElDorado\obj\Debug\ElDorado.Properties.Resources.resources
+C:\Users\hogarth45\Documents\Programming\tools\ElDorado\obj\Debug\ElDorado.csproj.GenerateResource.Cache
+C:\Users\hogarth45\Documents\Programming\tools\ElDorado\obj\Debug\ElDorado.exe
+C:\Users\hogarth45\Documents\Programming\tools\ElDorado\obj\Debug\ElDorado.pdb
+C:\Users\hogarth45\Documents\Programming\tools\ElDorado\bin\Debug\Clark.Crawler.dll
+C:\Users\hogarth45\Documents\Programming\tools\ElDorado\bin\Debug\HtmlAgilityPack.dll
+C:\Users\hogarth45\Documents\Programming\tools\ElDorado\bin\Debug\Clark.Crawler.pdb

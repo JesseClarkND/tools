@@ -3,6 +3,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElDorado", "ElDorado\ElDorado.csproj", "{7118A3B0-A9C3-40F4-B6EC-CD176D58AF16}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "components", "components", "{5D61D0DA-C3B4-4BCC-963C-5824AB018D25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clark.Crawler", "..\Clark\Clark.Crawler\Clark.Crawler.csproj", "{39500000-FD93-4CC5-B96D-599C5A8400D0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,8 +17,15 @@ Global
 		{7118A3B0-A9C3-40F4-B6EC-CD176D58AF16}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7118A3B0-A9C3-40F4-B6EC-CD176D58AF16}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7118A3B0-A9C3-40F4-B6EC-CD176D58AF16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39500000-FD93-4CC5-B96D-599C5A8400D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39500000-FD93-4CC5-B96D-599C5A8400D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39500000-FD93-4CC5-B96D-599C5A8400D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39500000-FD93-4CC5-B96D-599C5A8400D0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{39500000-FD93-4CC5-B96D-599C5A8400D0} = {5D61D0DA-C3B4-4BCC-963C-5824AB018D25}
 	EndGlobalSection
 EndGlobal
