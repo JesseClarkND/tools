@@ -54,10 +54,10 @@ namespace ElDorado
                 _resultAction = new Action<IRequest>(Write);
                 _pageCounterAction = new Action(UpdateSiteCount);
 
-                SubDomainGenerator gen = new SubDomainGenerator();
+                SubDomainGenerator gen = new SubDomainGenerator(GenerationMode.Brute);
                 while (true)
                 {
-                    Request request = new Request(gen.GenerateString() + "."+baseURL);
+                    Request request = new Request(gen.Next() + "."+baseURL);
 
                     RequestUtility.GetWebText(request);
                     if (!request.Response.Code.Equals("404"))
