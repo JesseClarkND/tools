@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,44 +15,74 @@ namespace ElDorado.Utility
 
     public class SubDomainGenerator
     {
-        private GenerationMode _generationMode;
-        BruteGenerator brute = new BruteGenerator();
 
-        public SubDomainGenerator(GenerationMode mode)
+        private GenerationMode _generationMode;
+        private ulong _genCount = 0;
+        private int _maxLength = 5;
+        private List<string> _domains = new List<string>();
+        private string _dir = "";
+ 
+        public SubDomainGenerator(int startinglength=1)
         {
-            _generationMode = mode;
+            _generationMode = GenerationMode.Brute;
+            _genCount = (ulong)Math.Pow(10, startinglength-1);
+            if (_genCount == 1)
+                _genCount--;
+        }
+
+        public SubDomainGenerator(string fileLocation)
+        {
+            _generationMode = GenerationMode.File;
+            _dir = fileLocation;
         }
 
         public string Next()
         {
             if (_generationMode == GenerationMode.Brute)
-                return brute.GenerateString();
+            {
+                string domain = BruteGenerator.GenerateString(_genCount++);
+                if(domain.Length>_maxLength)
+                    return "";
+                return domain;
+            }
             else
-                return "aaa";
+            {
+                //todo: findout if best method, maybe move items to a sqllite db and read from there
+                if (_domains.Count == 0)
+                {
+                    if (!File.Exists(_dir))
+                        throw new Exception("File doesn't exist");
+
+                    var logFile = File.ReadAllLines(_dir);
+                    _domains = new List<string>(logFile);
+                }
+
+                if (_domains.Count < (int)_genCount)
+                    return "";
+
+                return _domains[(int)_genCount++];
+            }
         }
     }
 
     internal class BruteGenerator
     {
         //based on rolfl's code at https://codereview.stackexchange.com/users/31503/rolfl
-        private int _genCount = 0;
-        private char[] _charArray = new char[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_', '-' };
 
-        public string GenerateString()
+        private static char[] _charArray = new char[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_', '-' };
+
+        public static string GenerateString(ulong count)
         {
-            string password = "";
+            string stringGen = "";
             ulong baseLength = (ulong)_charArray.Length;
-
-            // get the current value, increment the next.
-            ulong current = (ulong)_genCount++;
 
             do
             {
-                password = _charArray[current % baseLength] + password;
-                current /= baseLength;
-            } while (current != 0);
+                stringGen = _charArray[count % baseLength] + stringGen;
+                count /= baseLength;
+            } while (count != 0);
 
-            return password;
+            return stringGen;
         }
     }
 }

@@ -28,12 +28,21 @@ namespace ElDorado
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            _radBrute.Checked = true;
             CrawlerContext.Initialize();
             _txtURL.Text = "blackdoorsec.net";
         }
 
         private void _btnStart_Click(object sender, EventArgs e)
         {
+            if (_radBrute.Checked)
+                AppContext.Mode = GenerationMode.Brute;
+            else
+            {
+                AppContext.Mode = GenerationMode.File;
+                AppContext.FileLocation = openFileDialog.FileName;
+            }
+
             _btnStart.Enabled = false;
             _bgWorker.DoWork += new DoWorkEventHandler(_bgWorker_DoWork);
             _bgWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_bgWorker_RunWorkerCompleted);
@@ -44,6 +53,8 @@ namespace ElDorado
 
         private void _bgWorker_DoWork(object sender, DoWorkEventArgs e)
         {
+            //todo: move this function back to a class, only keep form code here
+
             try
             {
                 //  CrawlerContext.SessionFileName = "Scraper";
@@ -54,18 +65,22 @@ namespace ElDorado
                 _resultAction = new Action<IRequest>(Write);
                 _pageCounterAction = new Action(UpdateSiteCount);
 
-                SubDomainGenerator gen = new SubDomainGenerator(GenerationMode.Brute);
-                while (true)
-                {
-                    Request request = new Request(gen.Next() + "."+baseURL);
+                SubDomainGenerator gen = null;
 
-                    RequestUtility.GetWebText(request);
-                    if (!request.Response.Code.Equals("404"))
-                    {
-                        //AppContext.FoundSocialURLs404.Add(foundUrl.Url + " @ " + url);
-                        //_lstFound.Items.Add(request.Url);
-                    }
+                if (AppContext.Mode == GenerationMode.Brute)
+                    gen = new SubDomainGenerator();
+                else
+                    gen = new SubDomainGenerator(AppContext.FileLocation);
+
+                string subDomain = gen.Next();
+                while (!String.IsNullOrEmpty(subDomain))
+                {
+                    _pageCounterAction.Invoke();
+                    CheckRequest(new Request("http://"+subDomain + "." + baseURL));
+                    CheckRequest(new Request("https://"+subDomain + "." + baseURL));
+                    subDomain = gen.Next();
                 }
+            
 
                // Crawler.CrawlSite(_resultAction, _pageCounterAction);
                 //LinearCrawler.CrawlSite(DataGridWrite, SiteCounter);
@@ -73,6 +88,26 @@ namespace ElDorado
             catch (Exception ex)
             {
                 MessageBox.Show("Scanner Error: " + ex.Message);
+            }
+        }
+
+        private void CheckRequest(Request request)
+        {
+            RequestUtility.GetWebText(request);
+
+            // if (request.Response.Error == true)
+            if (!String.IsNullOrEmpty(request.Response.ErrorMessage))
+            {
+                MessageBox.Show(request.Response.ErrorMessage);
+            }
+
+            if (request.Response.Code.Equals("200"))
+            {
+                AppContext.Found.Add(request.Url);
+                _resultAction.Invoke(request);
+
+                //AppContext.FoundSocialURLs404.Add(foundUrl.Url + " @ " + url);
+                //_lstFound.Items.Add(request.Url);
             }
         }
 
@@ -97,6 +132,8 @@ namespace ElDorado
                 this.BeginInvoke(_resultAction, request);
                 return;
             }
+
+            _lstFound.Items.Add(request.Url);
         }
 
         private void _bgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
