@@ -3,3 +3,9 @@ ElDorado/bin/Debug/ElDorado.exe
 ElDorado/bin/Debug/ElDorado.pdb
 ElDorado/obj/Debug/ElDorado.exe
 ElDorado/obj/Debug/ElDorado.pdb
+*.dll
+*.pdb
+ElDorado/bin/Debug/ElDorado.exe
+ElDorado/obj/Debug/ElDorado.exe
+ElDorado/obj/Debug/ElDorado.csprojResolveAssemblyReference.cache
+ElDorado/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache

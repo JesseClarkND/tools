@@ -5,7 +5,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElDorado", "ElDorado\ElDora
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "components", "components", "{5D61D0DA-C3B4-4BCC-963C-5824AB018D25}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clark.Crawler", "..\Clark\Clark.Crawler\Clark.Crawler.csproj", "{39500000-FD93-4CC5-B96D-599C5A8400D0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clark.Crawler", "..\utilities\Clark.Crawler\Clark.Crawler.csproj", "{39500000-FD93-4CC5-B96D-599C5A8400D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
