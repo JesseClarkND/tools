@@ -15,16 +15,17 @@ namespace ElDorado.App
         private static Action<IRequest> _responseHandler;
         private static Action _pageCounter;
 
-        public static void Explore(string domain, object responseHandler, object actCounter)
+        public static void Explore(int threadCount, string domain, object responseHandler, object actCounter)
         {
             _responseHandler = (Action<IRequest>)responseHandler;
             _pageCounter = (Action)actCounter;
 
-            Search(domain);
+            Search(threadCount, domain);
         }
 
-        private static void Search(string domain)
+        private static void Search(int threadCount, string domain)
         {
+            //playing with best idea of multi-threading vs tasks vs thread pool etc
             SubDomainGenerator gen = null;
 
             if (AppContext.Mode == GenerationMode.Brute)
@@ -32,6 +33,29 @@ namespace ElDorado.App
             else
                 gen = new SubDomainGenerator(AppContext.FileLocation);
 
+
+            Task[] tasks = new Task[threadCount];
+
+            for (int count = 0; count < threadCount; count++)
+            {
+                tasks[count] = Task.Factory.StartNew(() => SearchRequest(gen, domain, count));
+            }
+
+            Task.WaitAll(tasks);
+
+            //229 requests/min
+            //string subDomain = gen.Next();
+            //while (!String.IsNullOrEmpty(subDomain))
+            //{
+            //    _pageCounter.Invoke();
+            //    CheckRequest(new Request("http://" + subDomain + "." + domain));
+            //    CheckRequest(new Request("https://" + subDomain + "." + domain));
+            //    subDomain = gen.Next();
+            //}
+        }
+
+        private static void SearchRequest(SubDomainGenerator gen, string domain, int meh)
+        {
             string subDomain = gen.Next();
             while (!String.IsNullOrEmpty(subDomain))
             {

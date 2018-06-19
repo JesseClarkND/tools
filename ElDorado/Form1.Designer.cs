@@ -34,20 +34,25 @@
             this._lstPorts = new System.Windows.Forms.ListBox();
             this._chkPortScan = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this._radBrute = new System.Windows.Forms.RadioButton();
-            this._radFile = new System.Windows.Forms.RadioButton();
-            this.label2 = new System.Windows.Forms.Label();
-            this._lblFile = new System.Windows.Forms.Label();
-            this._btnStart = new System.Windows.Forms.Button();
-            this.label4 = new System.Windows.Forms.Label();
             this._btnSelectFile = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this._lblFile = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this._radFile = new System.Windows.Forms.RadioButton();
+            this._radBrute = new System.Windows.Forms.RadioButton();
+            this._btnStart = new System.Windows.Forms.Button();
             this._chkRescan = new System.Windows.Forms.CheckBox();
             this._chkScreenshot = new System.Windows.Forms.CheckBox();
             this._bgWorker = new System.ComponentModel.BackgroundWorker();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.label5 = new System.Windows.Forms.Label();
             this._lblCount = new System.Windows.Forms.Label();
+            this._trkBarTasks = new System.Windows.Forms.TrackBar();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._trkBarTasks)).BeginInit();
             this.SuspendLayout();
             // 
             // _txtURL
@@ -105,16 +110,42 @@
             this.panel1.Size = new System.Drawing.Size(268, 116);
             this.panel1.TabIndex = 6;
             // 
-            // _radBrute
+            // _btnSelectFile
             // 
-            this._radBrute.AutoSize = true;
-            this._radBrute.Location = new System.Drawing.Point(16, 35);
-            this._radBrute.Name = "_radBrute";
-            this._radBrute.Size = new System.Drawing.Size(80, 17);
-            this._radBrute.TabIndex = 0;
-            this._radBrute.TabStop = true;
-            this._radBrute.Text = "Brute Force";
-            this._radBrute.UseVisualStyleBackColor = true;
+            this._btnSelectFile.Location = new System.Drawing.Point(85, 65);
+            this._btnSelectFile.Name = "_btnSelectFile";
+            this._btnSelectFile.Size = new System.Drawing.Size(52, 23);
+            this._btnSelectFile.TabIndex = 5;
+            this._btnSelectFile.Text = "Select";
+            this._btnSelectFile.UseVisualStyleBackColor = true;
+            this._btnSelectFile.Click += new System.EventHandler(this._btnSelectFile_Click);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(3, 10);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(144, 13);
+            this.label4.TabIndex = 4;
+            this.label4.Text = "Subdomain enumeration type";
+            // 
+            // _lblFile
+            // 
+            this._lblFile.AutoSize = true;
+            this._lblFile.Location = new System.Drawing.Point(30, 91);
+            this._lblFile.Name = "_lblFile";
+            this._lblFile.Size = new System.Drawing.Size(78, 13);
+            this._lblFile.TabIndex = 3;
+            this._lblFile.Text = "None Selected";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(30, 78);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(26, 13);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "File:";
             // 
             // _radFile
             // 
@@ -127,52 +158,26 @@
             this._radFile.Text = "Use File";
             this._radFile.UseVisualStyleBackColor = true;
             // 
-            // label2
+            // _radBrute
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(30, 78);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(26, 13);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "File:";
-            // 
-            // _lblFile
-            // 
-            this._lblFile.AutoSize = true;
-            this._lblFile.Location = new System.Drawing.Point(30, 91);
-            this._lblFile.Name = "_lblFile";
-            this._lblFile.Size = new System.Drawing.Size(78, 13);
-            this._lblFile.TabIndex = 3;
-            this._lblFile.Text = "None Selected";
+            this._radBrute.AutoSize = true;
+            this._radBrute.Location = new System.Drawing.Point(16, 35);
+            this._radBrute.Name = "_radBrute";
+            this._radBrute.Size = new System.Drawing.Size(80, 17);
+            this._radBrute.TabIndex = 0;
+            this._radBrute.TabStop = true;
+            this._radBrute.Text = "Brute Force";
+            this._radBrute.UseVisualStyleBackColor = true;
             // 
             // _btnStart
             // 
-            this._btnStart.Location = new System.Drawing.Point(201, 230);
+            this._btnStart.Location = new System.Drawing.Point(323, 286);
             this._btnStart.Name = "_btnStart";
             this._btnStart.Size = new System.Drawing.Size(85, 51);
             this._btnStart.TabIndex = 7;
             this._btnStart.Text = "Start";
             this._btnStart.UseVisualStyleBackColor = true;
             this._btnStart.Click += new System.EventHandler(this._btnStart_Click);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 10);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(144, 13);
-            this.label4.TabIndex = 4;
-            this.label4.Text = "Subdomain enumeration type";
-            // 
-            // _btnSelectFile
-            // 
-            this._btnSelectFile.Location = new System.Drawing.Point(85, 65);
-            this._btnSelectFile.Name = "_btnSelectFile";
-            this._btnSelectFile.Size = new System.Drawing.Size(52, 23);
-            this._btnSelectFile.TabIndex = 5;
-            this._btnSelectFile.Text = "Select";
-            this._btnSelectFile.UseVisualStyleBackColor = true;
-            this._btnSelectFile.Click += new System.EventHandler(this._btnSelectFile_Click);
             // 
             // _chkRescan
             // 
@@ -216,11 +221,51 @@
             this._lblCount.TabIndex = 11;
             this._lblCount.Text = "0";
             // 
+            // _trkBarTasks
+            // 
+            this._trkBarTasks.Location = new System.Drawing.Point(85, 292);
+            this._trkBarTasks.Minimum = 1;
+            this._trkBarTasks.Name = "_trkBarTasks";
+            this._trkBarTasks.Size = new System.Drawing.Size(184, 45);
+            this._trkBarTasks.TabIndex = 12;
+            this._trkBarTasks.Value = 1;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(31, 286);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(39, 13);
+            this.label3.TabIndex = 13;
+            this.label3.Text = "Tasks:";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(77, 327);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(13, 13);
+            this.label6.TabIndex = 14;
+            this.label6.Text = "1";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(256, 327);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(19, 13);
+            this.label7.TabIndex = 15;
+            this.label7.Text = "10";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1124, 292);
+            this.ClientSize = new System.Drawing.Size(1124, 349);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this._trkBarTasks);
             this.Controls.Add(this._lblCount);
             this.Controls.Add(this.label5);
             this.Controls.Add(this._chkScreenshot);
@@ -237,6 +282,7 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._trkBarTasks)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -263,6 +309,10 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label _lblCount;
+        private System.Windows.Forms.TrackBar _trkBarTasks;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
     }
 }
 

@@ -10,7 +10,7 @@ namespace ElDorado.App
     public static class AppContext
     {
         public static bool SearchFindings = false;
-
+        public static int ThreadCount = 1;
         public static GenerationMode Mode;
         public static string FileLocation = "";
         public static List<string> Found = new List<string>();

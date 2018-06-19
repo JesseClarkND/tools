@@ -45,6 +45,7 @@ namespace ElDorado
 
             AppContext.SearchFindings = _chkRescan.Checked;
             AppContext.Found.Add(_txtURL.Text);
+            AppContext.ThreadCount = _trkBarTasks.Value;
             _btnStart.Enabled = false;
             _bgWorker.DoWork += new DoWorkEventHandler(_bgWorker_DoWork);
             _bgWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_bgWorker_RunWorkerCompleted);
@@ -65,13 +66,13 @@ namespace ElDorado
                     int count = 0;
                     while (AppContext.Found.Count != AppContext.Scanned.Count)
                     {
-                        Pizarro.Explore(AppContext.Found[count], _resultAction, _pageCounterAction);
+                        Pizarro.Explore(AppContext.ThreadCount, AppContext.Found[count], _resultAction, _pageCounterAction);
                         AppContext.Scanned.Add(AppContext.Found[count]);
                     }
                 }
                 else
                 {
-                    Pizarro.Explore(AppContext.Found[0], _resultAction, _pageCounterAction);
+                    Pizarro.Explore(AppContext.ThreadCount, AppContext.Found[0], _resultAction, _pageCounterAction);
                     AppContext.Scanned.Add(AppContext.Found[0]);
                 }
             }
