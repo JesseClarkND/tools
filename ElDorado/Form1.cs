@@ -68,6 +68,7 @@ namespace ElDorado
                     {
                         Pizarro.Explore(AppContext.ThreadCount, AppContext.Found[count], _resultAction, _pageCounterAction);
                         AppContext.Scanned.Add(AppContext.Found[count]);
+                        count++;
                     }
                 }
                 else
@@ -112,6 +113,7 @@ namespace ElDorado
             //_lblComplete.Text = "Complete";
             //_btnLaunch.Enabled = true;
             //_pbLoading.Visible = false;
+            MessageBox.Show("Done");
         }
 
         private void _btnSelectFile_Click(object sender, EventArgs e)

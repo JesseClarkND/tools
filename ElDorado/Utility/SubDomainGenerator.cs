@@ -18,9 +18,10 @@ namespace ElDorado.Utility
 
         private GenerationMode _generationMode;
         private ulong _genCount = 0;
-        private int _maxLength = 5;
+        private int _maxLength = 3;
         private List<string> _domains = new List<string>();
         private string _dir = "";
+        private readonly object _lockList = new object();
  
         public SubDomainGenerator(int startinglength=1)
         {
@@ -34,6 +35,13 @@ namespace ElDorado.Utility
         {
             _generationMode = GenerationMode.File;
             _dir = fileLocation;
+
+            if (!File.Exists(_dir))
+                throw new Exception("File doesn't exist");
+
+            //todo: findout if best method, maybe move items to a sqllite db and read from there
+            var logFile = File.ReadAllLines(_dir);
+            _domains = new List<string>(logFile);
         }
 
         public string Next()
@@ -47,20 +55,20 @@ namespace ElDorado.Utility
             }
             else
             {
-                //todo: findout if best method, maybe move items to a sqllite db and read from there
                 if (_domains.Count == 0)
                 {
-                    if (!File.Exists(_dir))
-                        throw new Exception("File doesn't exist");
-
-                    var logFile = File.ReadAllLines(_dir);
-                    _domains = new List<string>(logFile);
+                    return "";
                 }
 
-                if (_domains.Count < (int)_genCount)
-                    return "";
+                string returnString = "";
+                lock (_lockList)
+                {
+                    if (_domains.Count <= (int)_genCount)
+                        return "";
 
-                return _domains[(int)_genCount++];
+                    returnString = _domains[(int)_genCount++];
+                }
+                return returnString;
             }
         }
     }
