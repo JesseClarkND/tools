@@ -100,6 +100,8 @@ namespace ElDorado.App
             if (request.Response.Code.Equals("200"))
             {
                 AppContext.Found.Add(request.Url);
+                if (!AppContext.PortsFound.ContainsKey(request.Url))
+                    AppContext.PortsFound.Add(request.Url, new List<int>());
                 _responseHandler.Invoke(request);
 
                 //AppContext.FoundSocialURLs404.Add(foundUrl.Url + " @ " + url);

@@ -52,8 +52,16 @@
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
+            this._pnlPortsSelect = new System.Windows.Forms.Panel();
+            this.label9 = new System.Windows.Forms.Label();
+            this._radCommonPorts = new System.Windows.Forms.RadioButton();
+            this._radAllPorts = new System.Windows.Forms.RadioButton();
+            this.label10 = new System.Windows.Forms.Label();
+            this._lblPortCount = new System.Windows.Forms.Label();
+            this._btnStartPort = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._trkBarTasks)).BeginInit();
+            this._pnlPortsSelect.SuspendLayout();
             this.SuspendLayout();
             // 
             // _txtURL
@@ -75,17 +83,18 @@
             // _lstFound
             // 
             this._lstFound.FormattingEnabled = true;
-            this._lstFound.Location = new System.Drawing.Point(320, 30);
+            this._lstFound.Location = new System.Drawing.Point(458, 33);
             this._lstFound.Name = "_lstFound";
             this._lstFound.Size = new System.Drawing.Size(237, 251);
             this._lstFound.TabIndex = 2;
+            this._lstFound.SelectedIndexChanged += new System.EventHandler(this._lstFound_SelectedIndexChanged);
             // 
             // _lstPorts
             // 
             this._lstPorts.FormattingEnabled = true;
-            this._lstPorts.Location = new System.Drawing.Point(606, 30);
+            this._lstPorts.Location = new System.Drawing.Point(744, 33);
             this._lstPorts.Name = "_lstPorts";
-            this._lstPorts.Size = new System.Drawing.Size(74, 251);
+            this._lstPorts.Size = new System.Drawing.Size(85, 251);
             this._lstPorts.TabIndex = 3;
             // 
             // _chkPortScan
@@ -97,6 +106,7 @@
             this._chkPortScan.TabIndex = 5;
             this._chkPortScan.Text = "Perform Port Scan";
             this._chkPortScan.UseVisualStyleBackColor = true;
+            this._chkPortScan.CheckedChanged += new System.EventHandler(this._chkPortScan_CheckedChanged);
             // 
             // panel1
             // 
@@ -109,7 +119,7 @@
             this.panel1.Controls.Add(this._radBrute);
             this.panel1.Location = new System.Drawing.Point(28, 72);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(268, 116);
+            this.panel1.Size = new System.Drawing.Size(208, 116);
             this.panel1.TabIndex = 6;
             // 
             // _btnSelectFile
@@ -173,7 +183,7 @@
             // 
             // _btnStart
             // 
-            this._btnStart.Location = new System.Drawing.Point(323, 286);
+            this._btnStart.Location = new System.Drawing.Point(458, 290);
             this._btnStart.Name = "_btnStart";
             this._btnStart.Size = new System.Drawing.Size(85, 51);
             this._btnStart.TabIndex = 7;
@@ -184,7 +194,7 @@
             // _chkRescan
             // 
             this._chkRescan.AutoSize = true;
-            this._chkRescan.Location = new System.Drawing.Point(11, 230);
+            this._chkRescan.Location = new System.Drawing.Point(12, 230);
             this._chkRescan.Name = "_chkRescan";
             this._chkRescan.Size = new System.Drawing.Size(105, 17);
             this._chkRescan.TabIndex = 8;
@@ -194,7 +204,7 @@
             // _chkScreenshot
             // 
             this._chkScreenshot.AutoSize = true;
-            this._chkScreenshot.Location = new System.Drawing.Point(11, 253);
+            this._chkScreenshot.Location = new System.Drawing.Point(12, 253);
             this._chkScreenshot.Name = "_chkScreenshot";
             this._chkScreenshot.Size = new System.Drawing.Size(127, 17);
             this._chkScreenshot.TabIndex = 9;
@@ -208,7 +218,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(320, 11);
+            this.label5.Location = new System.Drawing.Point(458, 14);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(85, 13);
             this.label5.TabIndex = 10;
@@ -217,7 +227,7 @@
             // _lblCount
             // 
             this._lblCount.AutoSize = true;
-            this._lblCount.Location = new System.Drawing.Point(412, 10);
+            this._lblCount.Location = new System.Drawing.Point(550, 13);
             this._lblCount.Name = "_lblCount";
             this._lblCount.Size = new System.Drawing.Size(13, 13);
             this._lblCount.TabIndex = 11;
@@ -225,7 +235,7 @@
             // 
             // _trkBarTasks
             // 
-            this._trkBarTasks.Location = new System.Drawing.Point(85, 292);
+            this._trkBarTasks.Location = new System.Drawing.Point(85, 323);
             this._trkBarTasks.Minimum = 1;
             this._trkBarTasks.Name = "_trkBarTasks";
             this._trkBarTasks.Size = new System.Drawing.Size(184, 45);
@@ -235,7 +245,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(31, 286);
+            this.label3.Location = new System.Drawing.Point(31, 317);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(39, 13);
             this.label3.TabIndex = 13;
@@ -244,7 +254,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(77, 327);
+            this.label6.Location = new System.Drawing.Point(77, 358);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(13, 13);
             this.label6.TabIndex = 14;
@@ -253,7 +263,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(256, 327);
+            this.label7.Location = new System.Drawing.Point(256, 358);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(19, 13);
             this.label7.TabIndex = 15;
@@ -268,11 +278,84 @@
             this.label8.TabIndex = 6;
             this.label8.Text = "Max Length: 3 char";
             // 
+            // _pnlPortsSelect
+            // 
+            this._pnlPortsSelect.Controls.Add(this._radAllPorts);
+            this._pnlPortsSelect.Controls.Add(this._radCommonPorts);
+            this._pnlPortsSelect.Controls.Add(this.label9);
+            this._pnlPortsSelect.Location = new System.Drawing.Point(154, 194);
+            this._pnlPortsSelect.Name = "_pnlPortsSelect";
+            this._pnlPortsSelect.Size = new System.Drawing.Size(200, 100);
+            this._pnlPortsSelect.TabIndex = 16;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(12, 13);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(150, 13);
+            this.label9.TabIndex = 7;
+            this.label9.Text = "Which ports shall be scanned:";
+            // 
+            // _radCommonPorts
+            // 
+            this._radCommonPorts.AutoSize = true;
+            this._radCommonPorts.Location = new System.Drawing.Point(15, 30);
+            this._radCommonPorts.Name = "_radCommonPorts";
+            this._radCommonPorts.Size = new System.Drawing.Size(120, 17);
+            this._radCommonPorts.TabIndex = 8;
+            this._radCommonPorts.TabStop = true;
+            this._radCommonPorts.Text = "0 to 1023 (Common)";
+            this._radCommonPorts.UseVisualStyleBackColor = true;
+            // 
+            // _radAllPorts
+            // 
+            this._radAllPorts.AutoSize = true;
+            this._radAllPorts.Location = new System.Drawing.Point(15, 59);
+            this._radAllPorts.Name = "_radAllPorts";
+            this._radAllPorts.Size = new System.Drawing.Size(96, 17);
+            this._radAllPorts.TabIndex = 9;
+            this._radAllPorts.TabStop = true;
+            this._radAllPorts.Text = "0 to 65535 (All)";
+            this._radAllPorts.UseVisualStyleBackColor = true;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(697, 9);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(85, 13);
+            this.label10.TabIndex = 17;
+            this.label10.Text = "Requests Made:";
+            // 
+            // _lblPortCount
+            // 
+            this._lblPortCount.AutoSize = true;
+            this._lblPortCount.Location = new System.Drawing.Point(788, 9);
+            this._lblPortCount.Name = "_lblPortCount";
+            this._lblPortCount.Size = new System.Drawing.Size(13, 13);
+            this._lblPortCount.TabIndex = 18;
+            this._lblPortCount.Text = "0";
+            // 
+            // _btnStartPort
+            // 
+            this._btnStartPort.Location = new System.Drawing.Point(744, 290);
+            this._btnStartPort.Name = "_btnStartPort";
+            this._btnStartPort.Size = new System.Drawing.Size(85, 51);
+            this._btnStartPort.TabIndex = 19;
+            this._btnStartPort.Text = "Start";
+            this._btnStartPort.UseVisualStyleBackColor = true;
+            this._btnStartPort.Click += new System.EventHandler(this._btnStartPort_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1124, 349);
+            this.ClientSize = new System.Drawing.Size(1124, 380);
+            this.Controls.Add(this._btnStartPort);
+            this.Controls.Add(this._lblPortCount);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this._pnlPortsSelect);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label3);
@@ -294,6 +377,8 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this._trkBarTasks)).EndInit();
+            this._pnlPortsSelect.ResumeLayout(false);
+            this._pnlPortsSelect.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -325,6 +410,13 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Panel _pnlPortsSelect;
+        private System.Windows.Forms.RadioButton _radAllPorts;
+        private System.Windows.Forms.RadioButton _radCommonPorts;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label _lblPortCount;
+        private System.Windows.Forms.Button _btnStartPort;
     }
 }
 

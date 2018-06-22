@@ -15,6 +15,9 @@ namespace ElDorado.App
         public static string FileLocation = "";
         public static List<string> Found = new List<string>();
         public static List<string> Scanned = new List<string>();
+
         public static Dictionary<string, List<int>> PortsFound = new Dictionary<string, List<int>>();
+        public static int MaxPort = 0;
+        public static int TimeOut = 5000;
     }
 }

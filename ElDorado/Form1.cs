@@ -20,6 +20,7 @@ namespace ElDorado
     {
         private static Action<IRequest> _resultAction;
         private static Action _pageCounterAction;
+        private static Action _portCounterAction;
 
         public Form1()
         {
@@ -30,6 +31,7 @@ namespace ElDorado
         {
             _radBrute.Checked = true;
             CrawlerContext.Initialize();
+            _pnlPortsSelect.Visible = false;
             _txtURL.Text = "blackdoorsec.net";
         }
 
@@ -45,7 +47,18 @@ namespace ElDorado
 
             AppContext.SearchFindings = _chkRescan.Checked;
             AppContext.Found.Add(_txtURL.Text);
+            AppContext.PortsFound.Add(_txtURL.Text, new List<int>());
+            _lstFound.Items.Add(_txtURL.Text);
             AppContext.ThreadCount = _trkBarTasks.Value;
+
+            if (_chkPortScan.Checked)
+            {
+                if (_radCommonPorts.Checked)
+                    AppContext.MaxPort = 1023;
+                else
+                    AppContext.MaxPort = 65535;
+            }
+
             _btnStart.Enabled = false;
             _bgWorker.DoWork += new DoWorkEventHandler(_bgWorker_DoWork);
             _bgWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_bgWorker_RunWorkerCompleted);
@@ -60,6 +73,7 @@ namespace ElDorado
                 string baseURL = _txtURL.Text;
                 _resultAction = new Action<IRequest>(Write);
                 _pageCounterAction = new Action(UpdateSiteCount);
+                _portCounterAction = new Action(UpdatePortCount);
 
                 if (AppContext.SearchFindings)
                 {
@@ -75,6 +89,15 @@ namespace ElDorado
                 {
                     Pizarro.Explore(AppContext.ThreadCount, AppContext.Found[0], _resultAction, _pageCounterAction);
                     AppContext.Scanned.Add(AppContext.Found[0]);
+                }
+
+                if (AppContext.MaxPort != 0)
+                {
+                    foreach (string host in AppContext.Found)
+                    {
+                        PortScanner.Start(AppContext.ThreadCount, host, 0, AppContext.MaxPort, AppContext.TimeOut, _portCounterAction);
+ 
+                    }
                 }
             }
             catch (Exception ex)
@@ -95,6 +118,20 @@ namespace ElDorado
             int count = int.Parse(counter);
             _lblCount.Text = (++count).ToString();
             _lblCount.Refresh();
+        }
+
+        public void UpdatePortCount()
+        {
+            if (_lblPortCount.InvokeRequired)
+            {
+                this.BeginInvoke(_portCounterAction);
+                return;
+            }
+
+            string counter = _lblPortCount.Text;
+            int count = int.Parse(counter);
+            _lblPortCount.Text = (++count).ToString();
+            _lblPortCount.Refresh();
         }
 
         public void Write(IRequest request)
@@ -122,6 +159,36 @@ namespace ElDorado
             {
                 _lblFile.Text = openFileDialog.FileName;
             }
+        }
+
+        private void _chkPortScan_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_chkPortScan.Checked)
+            {
+                _pnlPortsSelect.Visible = _chkPortScan.Visible = true;
+                _radCommonPorts.Checked = true;
+            }
+        }
+
+        private void _lstFound_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _lstPorts.Items.Clear();
+
+            string domain = _lstFound.GetItemText(_lstFound.SelectedItem);
+
+            if (AppContext.PortsFound.ContainsKey(domain))
+            {
+                foreach (int port in AppContext.PortsFound[domain])
+                {
+                    _lstPorts.Items.Add(port);
+                }
+            }
+        }
+
+        private void _btnStartPort_Click(object sender, EventArgs e)
+        {
+            _portCounterAction = new Action(UpdatePortCount);
+            PortScanner.Start(AppContext.ThreadCount, _txtURL.Text, 0, 1023, AppContext.TimeOut, _portCounterAction);
         }
     }
 }
