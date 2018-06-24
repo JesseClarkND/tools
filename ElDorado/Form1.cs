@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,6 +34,7 @@ namespace ElDorado
             CrawlerContext.Initialize();
             _pnlPortsSelect.Visible = false;
             _txtURL.Text = "blackdoorsec.net";
+            _chkScreenshot.Enabled = false;
         }
 
         private void _btnStart_Click(object sender, EventArgs e)
@@ -45,17 +47,19 @@ namespace ElDorado
                 AppContext.FileLocation = openFileDialog.FileName;
             }
 
+            AppContext.DoPortScan = _chkPortScan.Checked;
+            AppContext.SaveToFile = _chkSave.Checked;
             AppContext.SearchFindings = _chkRescan.Checked;
             AppContext.Found.Add(_txtURL.Text);
-            AppContext.PortsFound.Add(_txtURL.Text, new List<int>());
-            _lstFound.Items.Add(_txtURL.Text);
+            //AppContext.PortsFound.Add(_txtURL.Text, new List<int>());
+            //_lstFound.Items.Add(_txtURL.Text);
             AppContext.ThreadCount = _trkBarTasks.Value;
 
-            if (_chkPortScan.Checked)
+            if (AppContext.DoPortScan)
             {
                 if (_radCommonPorts.Checked)
                     AppContext.MaxPort = 1023;
-                else
+                else if (_radAllPorts.Checked)
                     AppContext.MaxPort = 65535;
             }
 
@@ -91,12 +95,15 @@ namespace ElDorado
                     AppContext.Scanned.Add(AppContext.Found[0]);
                 }
 
-                if (AppContext.MaxPort != 0)
+                if (AppContext.DoPortScan)
                 {
-                    foreach (string host in AppContext.Found)
+                    foreach (string host in AppContext.PortsFound.Keys)
                     {
-                        PortScanner.Start(AppContext.ThreadCount, host, 0, AppContext.MaxPort, AppContext.TimeOut, _portCounterAction);
- 
+                        if(AppContext.MaxPort != 0)
+                            PortScanner.Start(AppContext.ThreadCount, host, 0, AppContext.MaxPort, AppContext.TimeOut, _portCounterAction);
+                        else
+                            PortScanner.Start(AppContext.ThreadCount, host, AppContext.TimeOut, _portCounterAction);
+                        WritePortFindings(host);
                     }
                 }
             }
@@ -134,6 +141,26 @@ namespace ElDorado
             _lblPortCount.Refresh();
         }
 
+        public void WritePortFindings(string domain)
+        {
+            string findings = @"C:\results\EldoradoFindings.txt";
+
+            string[] fileContents = File.ReadAllLines(findings);
+
+            for (int i = 0; i < fileContents.Length; ++i)
+            {
+                if (fileContents[i] == domain)
+                {
+                    fileContents[i] += " - " + String.Join(", ", AppContext.PortsFound[domain].ToArray());
+                    break;
+                }
+            }
+
+            // And writing it all back out:
+
+            File.WriteAllLines(findings, fileContents);
+        }
+
         public void Write(IRequest request)
         {      
             if (_lstFound.InvokeRequired)
@@ -143,6 +170,27 @@ namespace ElDorado
             }
 
             _lstFound.Items.Add(request.Url);
+
+            if (AppContext.SaveToFile)
+            {
+                string path = @"C:\results\EldoradoFindings.txt";
+                // This text is added only once to the file.
+                if (!File.Exists(path))
+                {
+                    // Create a file to write to.
+                    using (StreamWriter sw = File.CreateText(path))
+                    {
+                        sw.WriteLine(request.Url);
+                    }
+                }
+                else
+                {
+                    using (StreamWriter sw = File.AppendText(path))
+                    {
+                        sw.WriteLine(request.Url);
+                    }
+                }
+            }
         }
 
         private void _bgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -166,7 +214,7 @@ namespace ElDorado
             if (_chkPortScan.Checked)
             {
                 _pnlPortsSelect.Visible = _chkPortScan.Visible = true;
-                _radCommonPorts.Checked = true;
+                _radPopularPorts.Checked = true;
             }
         }
 
@@ -188,7 +236,7 @@ namespace ElDorado
         private void _btnStartPort_Click(object sender, EventArgs e)
         {
             _portCounterAction = new Action(UpdatePortCount);
-            PortScanner.Start(AppContext.ThreadCount, _txtURL.Text, 0, 1023, AppContext.TimeOut, _portCounterAction);
+            PortScanner.Start(AppContext.ThreadCount, _txtURL.Text, AppContext.TimeOut, _portCounterAction);
         }
     }
 }

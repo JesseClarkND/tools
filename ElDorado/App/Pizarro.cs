@@ -37,7 +37,7 @@ namespace ElDorado.App
 
              _countdown = new CountdownEvent(threadCount);
 
-            //10 threads 812/min
+             //10 threads 812/min vs TaskFactory 10 tasks 638/min
             List<Thread> lstThreads = new List<Thread>();
             for (int count = 0; count < threadCount; count++)
             {
@@ -49,28 +49,6 @@ namespace ElDorado.App
                 th.Start();
 
             _countdown.Wait();
-            //foreach (Thread th in lstThreads)
-            //    th.Join();
-
-            // 10 taks 638/min
-            //Task[] tasks = new Task[threadCount];
-
-            //for (int count = 0; count < threadCount; count++)
-            //{
-            //    tasks[count] = Task.Factory.StartNew(() => SearchRequest(gen, domain, count));
-            //}
-
-            //Task.WaitAll(tasks);
-
-            //229 requests/min
-            //string subDomain = gen.Next();
-            //while (!String.IsNullOrEmpty(subDomain))
-            //{
-            //    _pageCounter.Invoke();
-            //    CheckRequest(new Request("http://" + subDomain + "." + domain));
-            //    CheckRequest(new Request("https://" + subDomain + "." + domain));
-            //    subDomain = gen.Next();
-            //}
         }
 
         private static void SearchRequest(SubDomainGenerator gen, string domain, int meh)
@@ -79,21 +57,21 @@ namespace ElDorado.App
             while (!String.IsNullOrEmpty(subDomain))
             {
                 _pageCounter.Invoke();
-                CheckRequest(new Request("http://" + subDomain + "." + domain));
-                CheckRequest(new Request("https://" + subDomain + "." + domain));
+                if(!CheckRequest(new Request("https://" + subDomain + "." + domain)))
+                    CheckRequest(new Request("http://" + subDomain + "." + domain));
                 subDomain = gen.Next();
             }
             _countdown.Signal();
         }
 
-        private static void CheckRequest(Request request)
+        private static bool CheckRequest(Request request)
         {
             RequestUtility.GetWebText(request);
 
             // if (request.Response.Error == true)
             if (!String.IsNullOrEmpty(request.Response.ErrorMessage))
             {
-                return;
+                return false;
                 //MessageBox.Show(request.Response.ErrorMessage);
             }
 
@@ -101,12 +79,15 @@ namespace ElDorado.App
             {
                 AppContext.Found.Add(request.Url);
                 if (!AppContext.PortsFound.ContainsKey(request.Url))
-                    AppContext.PortsFound.Add(request.Url, new List<int>());
+                    AppContext.PortsFound.Add(request.Url, new List<int>());//threw an object not set 6/24
                 _responseHandler.Invoke(request);
 
+                return true;
                 //AppContext.FoundSocialURLs404.Add(foundUrl.Url + " @ " + url);
                 //_lstFound.Items.Add(request.Url);
             }
+
+            return false;
         }
     }
 }

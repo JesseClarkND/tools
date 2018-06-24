@@ -9,7 +9,10 @@ namespace ElDorado.App
 {
     public static class AppContext
     {
+        public static bool SaveToFile = false;
         public static bool SearchFindings = false;
+        public static bool DoPortScan = false;
+
         public static int ThreadCount = 1;
         public static GenerationMode Mode;
         public static string FileLocation = "";
@@ -18,6 +21,6 @@ namespace ElDorado.App
 
         public static Dictionary<string, List<int>> PortsFound = new Dictionary<string, List<int>>();
         public static int MaxPort = 0;
-        public static int TimeOut = 5000;
+        public static int TimeOut = 3000;
     }
 }

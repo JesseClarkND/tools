@@ -37,9 +37,7 @@ namespace ElDorado.Utility
             //https://docs.microsoft.com/en-us/dotnet/framework/network-programming/asynchronous-client-socket-example
             foreach (string host in hosts)
             {
-                string properHost = DomainUtility.StripProtocol(host);
-
-                AddHost(properHost);
+                AddHost(host);
             }
         }
 
@@ -47,7 +45,7 @@ namespace ElDorado.Utility
         {
             if (!_hostToIP.ContainsKey(host))
             {
-                IPHostEntry ipHostInfo = Dns.GetHostEntry(host);
+                IPHostEntry ipHostInfo = Dns.GetHostEntry(DomainUtility.StripProtocol(host));
                 IPAddress ipAddress = ipHostInfo.AddressList[0];
                 _hostToIP.Add(host, ipAddress);
             }
@@ -55,17 +53,28 @@ namespace ElDorado.Utility
 
         public static void Start(int threadCounter, string host, int portStart, int portStop, int timeout, object actCounter)
         {
-            _host = DomainUtility.StripProtocol(host);
+            _host = host;
             AddHost(_host);
-            string properHost = DomainUtility.StripProtocol(host);
-
-            IPHostEntry ipHostInfo = Dns.GetHostEntry(properHost);
-            IPAddress ipAddress = ipHostInfo.AddressList[0];
-
-            if (!_hostToIP.ContainsKey(properHost))
-                _hostToIP.Add(properHost, ipAddress);
-
+     
             _portList = new PortList(portStart, portStop);
+            TcpTimeout = timeout;
+            _portCounter = (Action)actCounter;
+
+            _countdown = new CountdownEvent(threadCounter);
+            for (int i = 0; i < threadCounter; i++)
+            {
+                Thread thread = new Thread(new ThreadStart(RunScanTcp));
+                thread.Start();
+            }
+            _countdown.Wait();
+        }
+
+        public static void Start(int threadCounter, string host, int timeout, object actCounter)
+        {
+            _host = host;
+            AddHost(_host);
+    
+            _portList = new PortList();
             TcpTimeout = timeout;
             _portCounter = (Action)actCounter;
 

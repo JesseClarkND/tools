@@ -59,6 +59,8 @@
             this.label10 = new System.Windows.Forms.Label();
             this._lblPortCount = new System.Windows.Forms.Label();
             this._btnStartPort = new System.Windows.Forms.Button();
+            this._chkSave = new System.Windows.Forms.CheckBox();
+            this._radPopularPorts = new System.Windows.Forms.RadioButton();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._trkBarTasks)).BeginInit();
             this._pnlPortsSelect.SuspendLayout();
@@ -280,12 +282,13 @@
             // 
             // _pnlPortsSelect
             // 
+            this._pnlPortsSelect.Controls.Add(this._radPopularPorts);
             this._pnlPortsSelect.Controls.Add(this._radAllPorts);
             this._pnlPortsSelect.Controls.Add(this._radCommonPorts);
             this._pnlPortsSelect.Controls.Add(this.label9);
             this._pnlPortsSelect.Location = new System.Drawing.Point(154, 194);
             this._pnlPortsSelect.Name = "_pnlPortsSelect";
-            this._pnlPortsSelect.Size = new System.Drawing.Size(200, 100);
+            this._pnlPortsSelect.Size = new System.Drawing.Size(200, 123);
             this._pnlPortsSelect.TabIndex = 16;
             // 
             // label9
@@ -300,7 +303,7 @@
             // _radCommonPorts
             // 
             this._radCommonPorts.AutoSize = true;
-            this._radCommonPorts.Location = new System.Drawing.Point(15, 30);
+            this._radCommonPorts.Location = new System.Drawing.Point(15, 58);
             this._radCommonPorts.Name = "_radCommonPorts";
             this._radCommonPorts.Size = new System.Drawing.Size(120, 17);
             this._radCommonPorts.TabIndex = 8;
@@ -311,7 +314,7 @@
             // _radAllPorts
             // 
             this._radAllPorts.AutoSize = true;
-            this._radAllPorts.Location = new System.Drawing.Point(15, 59);
+            this._radAllPorts.Location = new System.Drawing.Point(15, 82);
             this._radAllPorts.Name = "_radAllPorts";
             this._radAllPorts.Size = new System.Drawing.Size(96, 17);
             this._radAllPorts.TabIndex = 9;
@@ -347,11 +350,33 @@
             this._btnStartPort.UseVisualStyleBackColor = true;
             this._btnStartPort.Click += new System.EventHandler(this._btnStartPort_Click);
             // 
+            // _chkSave
+            // 
+            this._chkSave.AutoSize = true;
+            this._chkSave.Location = new System.Drawing.Point(12, 276);
+            this._chkSave.Name = "_chkSave";
+            this._chkSave.Size = new System.Drawing.Size(89, 17);
+            this._chkSave.TabIndex = 20;
+            this._chkSave.Text = "Save Results";
+            this._chkSave.UseVisualStyleBackColor = true;
+            // 
+            // _radPopularPorts
+            // 
+            this._radPopularPorts.AutoSize = true;
+            this._radPopularPorts.Location = new System.Drawing.Point(15, 36);
+            this._radPopularPorts.Name = "_radPopularPorts";
+            this._radPopularPorts.Size = new System.Drawing.Size(114, 17);
+            this._radPopularPorts.TabIndex = 10;
+            this._radPopularPorts.TabStop = true;
+            this._radPopularPorts.Text = "Most Popular Ports";
+            this._radPopularPorts.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1124, 380);
+            this.Controls.Add(this._chkSave);
             this.Controls.Add(this._btnStartPort);
             this.Controls.Add(this._lblPortCount);
             this.Controls.Add(this.label10);
@@ -417,6 +442,8 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label _lblPortCount;
         private System.Windows.Forms.Button _btnStartPort;
+        private System.Windows.Forms.CheckBox _chkSave;
+        private System.Windows.Forms.RadioButton _radPopularPorts;
     }
 }
 
