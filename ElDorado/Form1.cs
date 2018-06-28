@@ -54,7 +54,7 @@ namespace ElDorado
             //AppContext.PortsFound.Add(_txtURL.Text, new List<int>());
             //_lstFound.Items.Add(_txtURL.Text);
             AppContext.ThreadCount = _trkBarTasks.Value;
-
+            FileSaver.FileName = "ElDoradoFindings-" + DateTime.Now.ToString("MM-dd-yyyy-hh-mm-ss") + ".txt";
             if (AppContext.DoPortScan)
             {
                 if (_radCommonPorts.Checked)
@@ -143,22 +143,7 @@ namespace ElDorado
 
         public void WritePortFindings(string domain)
         {
-            string findings = @"C:\results\EldoradoFindings.txt";
-
-            string[] fileContents = File.ReadAllLines(findings);
-
-            for (int i = 0; i < fileContents.Length; ++i)
-            {
-                if (fileContents[i] == domain)
-                {
-                    fileContents[i] += " - " + String.Join(", ", AppContext.PortsFound[domain].ToArray());
-                    break;
-                }
-            }
-
-            // And writing it all back out:
-
-            File.WriteAllLines(findings, fileContents);
+            FileSaver.WritePortFindings(domain, String.Join(", ", AppContext.PortsFound[domain].ToArray()));
         }
 
         public void Write(IRequest request)
@@ -173,23 +158,7 @@ namespace ElDorado
 
             if (AppContext.SaveToFile)
             {
-                string path = @"C:\results\EldoradoFindings.txt";
-                // This text is added only once to the file.
-                if (!File.Exists(path))
-                {
-                    // Create a file to write to.
-                    using (StreamWriter sw = File.CreateText(path))
-                    {
-                        sw.WriteLine(request.Url);
-                    }
-                }
-                else
-                {
-                    using (StreamWriter sw = File.AppendText(path))
-                    {
-                        sw.WriteLine(request.Url);
-                    }
-                }
+                FileSaver.WriteSubdomainFinding(request.Url);
             }
         }
 

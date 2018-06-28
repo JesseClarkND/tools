@@ -22,7 +22,9 @@ namespace ElDorado.App
             _responseHandler = (Action<IRequest>)responseHandler;
             _pageCounter = (Action)actCounter;
 
-            Search(threadCount, domain);
+
+            if(!CheckForWildCard(domain))
+                Search(threadCount, domain);
         }
 
         private static void Search(int threadCount, string domain)
@@ -41,7 +43,7 @@ namespace ElDorado.App
             List<Thread> lstThreads = new List<Thread>();
             for (int count = 0; count < threadCount; count++)
             {
-                Thread th = new Thread(() => { SearchRequest(gen, domain, count); });
+                Thread th = new Thread(() => { SearchRequest(gen, domain); });
                 lstThreads.Add(th);
             }
 
@@ -51,7 +53,18 @@ namespace ElDorado.App
             _countdown.Wait();
         }
 
-        private static void SearchRequest(SubDomainGenerator gen, string domain, int meh)
+        private static bool CheckForWildCard(string domain)
+        {
+            if (CheckRequest(new Request("https://aa89abbbck398s0a." + domain)))
+                return true;
+
+            if (CheckRequest(new Request("http://aa89abbbck398s0a." + domain)))
+                return true;
+
+            return false;
+        }
+
+        private static void SearchRequest(SubDomainGenerator gen, string domain)
         {
             string subDomain = gen.Next();
             while (!String.IsNullOrEmpty(subDomain))
