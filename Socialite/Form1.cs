@@ -1,6 +1,7 @@
 ﻿using Clark.Crawler;
 using Clark.Crawler.Interfaces;
 using Clark.Crawler.Models;
+using Clark.Socialite.Data;
 using Socialite.App;
 using Socialite.Settings;
 using Socialite.Utility;
@@ -95,26 +96,9 @@ namespace Socialite
             {
                 if (!url.Key.Equals("200"))
                 {
-                    _lstResult.Items.Add(url);
+                    _lstResult.Items.Add(url.Value);
 
-                    FileSaver.WriteLinkFinding(url.Key + " " + url.Value);
-                    //string path = @"C:\results\SocialiteFindings.txt";
-                    //// This text is added only once to the file.
-                    //if (!File.Exists(path))
-                    //{
-                    //    // Create a file to write to.
-                    //    using (StreamWriter sw = File.CreateText(path))
-                    //    {
-                    //        sw.WriteLine(url.Key + " " + url.Value);
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    using (StreamWriter sw = File.AppendText(path))
-                    //    {
-                    //        sw.WriteLine(url.Key + " " + url.Value);
-                    //    }
-                    //}
+                    FileSaver.WriteLinkFinding(url.Key + " " + url.Value);    
                 }
             }
             _lstResult.Refresh();
@@ -124,14 +108,20 @@ namespace Socialite
         {
             CrawlerContext.Initialize();
             CrawlerContext.LightMode = true;
-            _txtURL.Text = "https://www.buzzfeed.com/news?utm_term=.pc7OLEyE8#.oyOAQyByr";
-            _lstTarget.Items.Add("facebook.com");
-            _lstTarget.Items.Add("twitter.com");
-            _lstTarget.Items.Add("instagram.com");
-            _lstTarget.Items.Add("pintrist.com");
-            _lstTarget.Items.Add("youtube.com");
-            _lstTarget.Items.Add("flickr.com");
-            _lstTarget.Items.Add("linkedin.com");
+            _txtURL.Text = "http://www.algolia.com/press";// "https://www.buzzfeed.com/news?utm_term=.pc7OLEyE8#.oyOAQyByr";
+
+            foreach (DomainData domain in Constants.CommonDomainData.Values)
+            {
+                _lstTarget.Items.Add(domain.DomainName);
+            }
+
+            //_lstTarget.Items.Add("facebook.com");
+            //_lstTarget.Items.Add("twitter.com");
+            //_lstTarget.Items.Add("instagram.com");
+            //_lstTarget.Items.Add("pintrist.com");
+            //_lstTarget.Items.Add("youtube.com");
+            //_lstTarget.Items.Add("flickr.com");
+            //_lstTarget.Items.Add("linkedin.com");
         }
 
         private void _btnAddTarget_Click(object sender, EventArgs e)
@@ -200,6 +190,11 @@ namespace Socialite
 
                 }
             }
+        }
+
+        private void _btnOpen_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(_lstResult.Items[0].ToString().Split('@')[0].Trim(' '));
         }
     }
 }

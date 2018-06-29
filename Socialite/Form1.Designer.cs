@@ -48,6 +48,7 @@
             this._btnFolderSelect = new System.Windows.Forms.Button();
             this._lblDir = new System.Windows.Forms.Label();
             this._btnStartFolder = new System.Windows.Forms.Button();
+            this._btnOpen = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -208,11 +209,22 @@
             this._btnStartFolder.UseVisualStyleBackColor = true;
             this._btnStartFolder.Click += new System.EventHandler(this._btnStartFolder_Click);
             // 
+            // _btnOpen
+            // 
+            this._btnOpen.Location = new System.Drawing.Point(1130, 36);
+            this._btnOpen.Name = "_btnOpen";
+            this._btnOpen.Size = new System.Drawing.Size(75, 23);
+            this._btnOpen.TabIndex = 15;
+            this._btnOpen.Text = "Open";
+            this._btnOpen.UseVisualStyleBackColor = true;
+            this._btnOpen.Click += new System.EventHandler(this._btnOpen_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1217, 341);
+            this.Controls.Add(this._btnOpen);
             this.Controls.Add(this._btnStartFolder);
             this.Controls.Add(this._lblDir);
             this.Controls.Add(this._btnFolderSelect);
@@ -261,6 +273,7 @@
         private System.Windows.Forms.Button _btnFolderSelect;
         private System.Windows.Forms.Label _lblDir;
         private System.Windows.Forms.Button _btnStartFolder;
+        private System.Windows.Forms.Button _btnOpen;
     }
 }
 

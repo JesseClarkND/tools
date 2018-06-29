@@ -39,9 +39,6 @@
     <Reference Include="Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.SQLite">
-      <HintPath>..\..\Samadhi2\dlls\System.Data.SQLite.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -101,6 +98,10 @@
     <ProjectReference Include="..\..\utilities\Clark.Crawler\Clark.Crawler.csproj">
       <Project>{39500000-fd93-4cc5-b96d-599c5a8400d0}</Project>
       <Name>Clark.Crawler</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\utilities\Clark.Socialite\Clark.Socialite.csproj">
+      <Project>{92fcf9e5-2f28-46d2-99c2-a3f93cc92bf3}</Project>
+      <Name>Clark.Socialite</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

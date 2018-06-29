@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clark.Crawler", "..\utilities\Clark.Crawler\Clark.Crawler.csproj", "{39500000-FD93-4CC5-B96D-599C5A8400D0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clark.Socialite", "..\utilities\Clark.Socialite\Clark.Socialite.csproj", "{92FCF9E5-2F28-46D2-99C2-A3F93CC92BF3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,11 +23,16 @@ Global
 		{39500000-FD93-4CC5-B96D-599C5A8400D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{39500000-FD93-4CC5-B96D-599C5A8400D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{39500000-FD93-4CC5-B96D-599C5A8400D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92FCF9E5-2F28-46D2-99C2-A3F93CC92BF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92FCF9E5-2F28-46D2-99C2-A3F93CC92BF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92FCF9E5-2F28-46D2-99C2-A3F93CC92BF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92FCF9E5-2F28-46D2-99C2-A3F93CC92BF3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{39500000-FD93-4CC5-B96D-599C5A8400D0} = {3CB8CB0A-2119-4953-BDF7-B48198FC007E}
+		{92FCF9E5-2F28-46D2-99C2-A3F93CC92BF3} = {3CB8CB0A-2119-4953-BDF7-B48198FC007E}
 	EndGlobalSection
 EndGlobal

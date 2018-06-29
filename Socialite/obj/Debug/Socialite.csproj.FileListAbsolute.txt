@@ -28,3 +28,5 @@ C:\Users\hogarth45\Documents\Programming\tools\Socialite\obj\Debug\Socialite.For
 C:\Users\hogarth45\Documents\Programming\tools\Socialite\obj\Debug\Socialite.Properties.Resources.resources
 C:\Users\hogarth45\Documents\Programming\tools\Socialite\obj\Debug\Socialite.Settings.frmSettings.resources
 C:\Users\hogarth45\Documents\Programming\tools\Socialite\obj\Debug\Socialite.csproj.GenerateResource.Cache
+C:\Users\hogarth45\Documents\Programming\tools\Socialite\bin\Debug\Clark.Socialite.dll
+C:\Users\hogarth45\Documents\Programming\tools\Socialite\bin\Debug\Clark.Socialite.pdb

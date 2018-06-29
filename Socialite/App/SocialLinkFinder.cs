@@ -51,7 +51,7 @@ namespace Socialite.App
                                 {
                                      AppContext.FoundSocialURLs.Add(foundUrl.Url);
 
-                                     Request request = new Request(DomainUtility.EnsureHTTPS(foundUrl.Url));
+                                    Request request = new Request(DomainUtility.EnsureHTTPS(foundUrl.Url));
                                     RequestUtility.GetWebText(request);
                                     if (request.Response.Code.Equals("404"))
                                         AppContext.FoundSocialURLs404.Add(foundUrl.Url + " @ " + url);
@@ -80,7 +80,7 @@ namespace Socialite.App
                         return false;
                     break;
                 case "twitter.com":
-                    if (url.Contains("intent") || url.Contains("statuses"))
+                    if (url.Contains("intent") || url.Contains("statuses") || url.Contains("status"))
                         return false;
                     break;
 
