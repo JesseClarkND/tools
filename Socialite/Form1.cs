@@ -3,6 +3,7 @@ using Clark.Crawler.Interfaces;
 using Clark.Crawler.Models;
 using Socialite.App;
 using Socialite.Settings;
+using Socialite.Utility;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -28,6 +29,8 @@ namespace Socialite
 
         private void _btnStart_Click(object sender, EventArgs e)
         {
+            FileSaver.FileName = "SocialiteFindings-" + DateTime.Now.ToString("MM-dd-yyyy-hh-mm-ss") + ".txt";
+           
             _btnStart.Enabled = false;
             _bgwScanner.DoWork += new DoWorkEventHandler(_bgwScanner_DoWork);
             _bgwScanner.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_bgwScanner_RunWorkerCompleted);
@@ -94,23 +97,24 @@ namespace Socialite
                 {
                     _lstResult.Items.Add(url);
 
-                    string path = @"C:\results\SocialiteFindings.txt";
-                    // This text is added only once to the file.
-                    if (!File.Exists(path))
-                    {
-                        // Create a file to write to.
-                        using (StreamWriter sw = File.CreateText(path))
-                        {
-                            sw.WriteLine(url.Key + " " + url.Value);
-                        }
-                    }
-                    else
-                    {
-                        using (StreamWriter sw = File.AppendText(path))
-                        {
-                            sw.WriteLine(url.Key + " " + url.Value);
-                        }
-                    }
+                    FileSaver.WriteLinkFinding(url.Key + " " + url.Value);
+                    //string path = @"C:\results\SocialiteFindings.txt";
+                    //// This text is added only once to the file.
+                    //if (!File.Exists(path))
+                    //{
+                    //    // Create a file to write to.
+                    //    using (StreamWriter sw = File.CreateText(path))
+                    //    {
+                    //        sw.WriteLine(url.Key + " " + url.Value);
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    using (StreamWriter sw = File.AppendText(path))
+                    //    {
+                    //        sw.WriteLine(url.Key + " " + url.Value);
+                    //    }
+                    //}
                 }
             }
             _lstResult.Refresh();
@@ -178,7 +182,8 @@ namespace Socialite
 
             _resultAction = new Action<IRequest>(Write);
             _pageCounterAction = new Action(UpdateSiteCount);
-
+            FileSaver.FileName = "SocialiteFindings-" + DateTime.Now.ToString("MM-dd-yyyy-hh-mm-ss") + ".txt";
+           
             foreach (string file in files)
             {
                 string[] lines = File.ReadAllLines(file);

@@ -14,3 +14,17 @@ C:\Users\hogarth45\Desktop\Socialite\Socialite\bin\Debug\HtmlAgilityPack.xml
 C:\Users\hogarth45\Desktop\Socialite\Socialite\bin\Debug\Clark.Crawler.dll
 C:\Users\hogarth45\Desktop\Socialite\Socialite\bin\Debug\Clark.Crawler.pdb
 C:\Users\hogarth45\Desktop\Socialite\Socialite\obj\Debug\Socialite.Settings.frmSettings.resources
+C:\Users\hogarth45\Documents\Programming\tools\Socialite\bin\Debug\Socialite.exe.config
+C:\Users\hogarth45\Documents\Programming\tools\Socialite\obj\Debug\Socialite.exe
+C:\Users\hogarth45\Documents\Programming\tools\Socialite\obj\Debug\Socialite.pdb
+C:\Users\hogarth45\Documents\Programming\tools\Socialite\bin\Debug\Socialite.exe
+C:\Users\hogarth45\Documents\Programming\tools\Socialite\bin\Debug\Socialite.pdb
+C:\Users\hogarth45\Documents\Programming\tools\Socialite\bin\Debug\Clark.Crawler.dll
+C:\Users\hogarth45\Documents\Programming\tools\Socialite\bin\Debug\Clark.Crawler.pdb
+C:\Users\hogarth45\Documents\Programming\tools\Socialite\bin\Debug\HtmlAgilityPack.pdb
+C:\Users\hogarth45\Documents\Programming\tools\Socialite\bin\Debug\HtmlAgilityPack.xml
+C:\Users\hogarth45\Documents\Programming\tools\Socialite\obj\Debug\Socialite.csprojResolveAssemblyReference.cache
+C:\Users\hogarth45\Documents\Programming\tools\Socialite\obj\Debug\Socialite.Form1.resources
+C:\Users\hogarth45\Documents\Programming\tools\Socialite\obj\Debug\Socialite.Properties.Resources.resources
+C:\Users\hogarth45\Documents\Programming\tools\Socialite\obj\Debug\Socialite.Settings.frmSettings.resources
+C:\Users\hogarth45\Documents\Programming\tools\Socialite\obj\Debug\Socialite.csproj.GenerateResource.Cache

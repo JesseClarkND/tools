@@ -68,6 +68,7 @@
     <Compile Include="Settings\frmSettings.Designer.cs">
       <DependentUpon>frmSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="Utility\FileSaver.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -97,7 +98,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Documents\Programming\Clark\Clark.Crawler\Clark.Crawler.csproj">
+    <ProjectReference Include="..\..\utilities\Clark.Crawler\Clark.Crawler.csproj">
       <Project>{39500000-fd93-4cc5-b96d-599c5a8400d0}</Project>
       <Name>Clark.Crawler</Name>
     </ProjectReference>
