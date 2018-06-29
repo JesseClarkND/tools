@@ -114,14 +114,6 @@ namespace Socialite
             {
                 _lstTarget.Items.Add(domain.DomainName);
             }
-
-            //_lstTarget.Items.Add("facebook.com");
-            //_lstTarget.Items.Add("twitter.com");
-            //_lstTarget.Items.Add("instagram.com");
-            //_lstTarget.Items.Add("pintrist.com");
-            //_lstTarget.Items.Add("youtube.com");
-            //_lstTarget.Items.Add("flickr.com");
-            //_lstTarget.Items.Add("linkedin.com");
         }
 
         private void _btnAddTarget_Click(object sender, EventArgs e)
