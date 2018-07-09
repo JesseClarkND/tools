@@ -89,8 +89,8 @@ namespace Socialite
                 return;
             }
 
-            List<string> socialURLs = _lstTarget.Items.Cast<String>().ToList();
-            List<KeyValuePair<string, string>> foundSocialUrls = SocialLinkFinder.Find(request.Response.Body, request.Url, socialURLs);
+           // List<string> socialURLs = _lstTarget.Items.Cast<String>().ToList();
+            List<KeyValuePair<string, string>> foundSocialUrls = SocialLinkFinder.Find(request.Response.Body, request.Url, Common.CommonDomainData);
 
             foreach (KeyValuePair<string, string> url in foundSocialUrls)
             {
@@ -110,9 +110,9 @@ namespace Socialite
             CrawlerContext.LightMode = true;
             _txtURL.Text = "http://www.algolia.com/press";// "https://www.buzzfeed.com/news?utm_term=.pc7OLEyE8#.oyOAQyByr";
 
-            foreach (DomainData domain in Constants.CommonDomainData.Values)
+            foreach (string domain in Common.CommonDomainData.Select(x=>x.DomainName))
             {
-                _lstTarget.Items.Add(domain.DomainName);
+                _lstTarget.Items.Add(domain);
             }
         }
 

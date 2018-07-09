@@ -70,8 +70,8 @@ namespace ElDorado.App
             while (!String.IsNullOrEmpty(subDomain))
             {
                 _pageCounter.Invoke();
-                if(!CheckRequest(new Request("https://" + subDomain + "." + domain)))
-                    CheckRequest(new Request("http://" + subDomain + "." + domain));
+                if(!CheckRequest(new Request("https://" + subDomain + "." + DomainUtility.StripProtocol(domain))))
+                    CheckRequest(new Request("http://" + subDomain + "." + DomainUtility.StripProtocol(domain)));
                 subDomain = gen.Next();
             }
             _countdown.Signal();

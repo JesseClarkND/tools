@@ -1,6 +1,8 @@
 ﻿using Clark.Crawler;
 using Clark.Crawler.Models;
 using Clark.Crawler.Utilities;
+using Clark.Socialite.Data;
+using Clark.Socialite.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +13,7 @@ namespace Socialite.App
 {
     public class SocialLinkFinder
     {
-        public static List<KeyValuePair<string, string>> Find(string body, string url, List<string> socialUrls)
+        public static List<KeyValuePair<string, string>> Find(string body, string url, List<DomainData> socialDomains)
         {
             List<KeyValuePair<string, string>> foundUrls = new List<KeyValuePair<string, string>>();
             LinkParser parser = new LinkParser();
@@ -19,13 +21,9 @@ namespace Socialite.App
 
             foreach (Request foundUrl in parser.GoodUrls)
             {
-                string foundDomain = DomainUtility.GetDomainFromUrl(foundUrl.Url);
                 string foundURL = foundUrl.Url.Split('?')[0];
 
-                if (!CheckForSharing(foundDomain, foundUrl.Url))
-                    continue;
-
-                if (socialUrls.Contains(foundDomain.ToLower()))
+                if(SocialDomainUtility.CheckIfSocialMediaSite(foundUrl.Url, socialDomains))
                 {
                     if (AppContext.UserNames.Count == 0)
                     {
@@ -67,40 +65,6 @@ namespace Socialite.App
             return foundUrls;
         }
 
-        private static bool CheckForSharing(string domain, string url)
-        {
-            //todo:
-            if (url.Contains("iframe"))
-                return false;
 
-            switch (domain)
-            {
-                case "facebook.com":
-                    if (url.Contains("share") || url.Contains("pages") || url.Contains("search"))
-                        return false;
-                    break;
-                case "twitter.com":
-                    if (url.Contains("intent") || url.Contains("statuses") || url.Contains("status"))
-                        return false;
-                    break;
-
-                case "pintrist":
-                    if (url.Contains("pin/create"))
-                        return false;
-                    break;
-
-
-                case "youtube":
-                    if (url.Contains("watch"))
-                        return false;
-                    break;
-
-                case "instagram":
-                    ;
-                    break;
-            }
-
-            return true;
-        }
     }
 }
