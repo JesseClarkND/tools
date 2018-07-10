@@ -13,49 +13,48 @@ namespace Socialite.App
 {
     public class SocialLinkFinder
     {
-        public static List<KeyValuePair<string, string>> Find(string body, string url, List<DomainData> socialDomains)
+        public static Dictionary<string, string> Find(string body, string url, List<string> userNames, List<DomainData> socialDomains, bool returnOnlyNone200=true)
         {
-            List<KeyValuePair<string, string>> foundUrls = new List<KeyValuePair<string, string>>();
+            Dictionary<string, string> foundUrls = new Dictionary<string, string>();
             LinkParser parser = new LinkParser();
             parser.ParseLinksAgility(body, url, true);
 
             foreach (Request foundUrl in parser.GoodUrls)
             {
-                string foundURL = foundUrl.Url.Split('?')[0];
+                string foundURL = DomainUtility.StripProtocol(foundUrl.Url.Split('?')[0]);
 
-                if(SocialDomainUtility.CheckIfSocialMediaSite(foundUrl.Url, socialDomains))
+                if (SocialDomainUtility.CheckIfSocialMediaSite(foundURL, socialDomains))
                 {
-                    if (AppContext.UserNames.Count == 0)
+                    if (userNames.Count == 0)
                     {
-                        if (!AppContext.FoundSocialURLs.Contains(foundUrl.Url))
+                        if (!foundUrls.ContainsKey(foundURL))
                         {
-                            AppContext.FoundSocialURLs.Add(foundUrl.Url);
+                            AppContext.FoundSocialURLs.Add(foundURL);
 
-                            Request request = new Request(DomainUtility.EnsureHTTPS(foundUrl.Url));
+                            Request request = new Request(DomainUtility.EnsureHTTPS(foundURL));
                             RequestUtility.GetWebText(request);
-                            if (request.Response.Code.Equals("404"))
-                                AppContext.FoundSocialURLs404.Add(foundUrl.Url + " @ " + url);
-
-                            foundUrls.Add(new KeyValuePair<string, string>(request.Response.Code, foundUrl.Url + " @ " + url));
+                            if (!request.Response.Code.Equals("200"))
+                                foundUrls.Add(foundURL, url);
+                            else if(!returnOnlyNone200)
+                                foundUrls.Add(foundURL, url);
                         }
                     }
                     else
                     {
-                        foreach (string userName in AppContext.UserNames)
+                        foreach (string userName in userNames)
                         {
                             if (foundURL.ToLower().Contains(userName.ToLower()))
                             {
-                                if (!AppContext.FoundSocialURLs.Contains(foundUrl.Url))
+                                if (!foundUrls.ContainsKey(foundURL))
                                 {
-                                     AppContext.FoundSocialURLs.Add(foundUrl.Url);
+                                     AppContext.FoundSocialURLs.Add(foundURL);
 
-                                    Request request = new Request(DomainUtility.EnsureHTTPS(foundUrl.Url));
+                                    Request request = new Request(DomainUtility.EnsureHTTPS(foundURL));
                                     RequestUtility.GetWebText(request);
-                                    if (request.Response.Code.Equals("404"))
-                                        AppContext.FoundSocialURLs404.Add(foundUrl.Url + " @ " + url);
-
-                                    foundUrls.Add(new KeyValuePair<string, string>(request.Response.Code, foundUrl.Url + " @ " + url));
-                                    break;
+                                    if (!request.Response.Code.Equals("200"))
+                                        foundUrls.Add(foundURL, url);
+                                    else if (!returnOnlyNone200)
+                                        foundUrls.Add(foundURL, url);
                                 }
                             }
                         }
