@@ -171,7 +171,7 @@ namespace Socialite
                         continue;
                     CrawlerContext.Initialize();
                     CrawlerContext.LightMode = true;
-                    CrawlerContext.Depth = 2;
+                    CrawlerContext.Depth = 4;
 
                     CrawlerContext.SetURL(line);
                     Crawler.CrawlSite(_resultAction, _pageCounterAction);

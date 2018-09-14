@@ -29,8 +29,7 @@ namespace Socialite.App
                     {
                         if (!foundUrls.ContainsKey(foundURL))
                         {
-                            AppContext.FoundSocialURLs.Add(foundURL);
-
+           
                             Request request = new Request(DomainUtility.EnsureHTTPS(foundURL));
                             RequestUtility.GetWebText(request);
                             if (!request.Response.Code.Equals("200"))
@@ -47,8 +46,6 @@ namespace Socialite.App
                             {
                                 if (!foundUrls.ContainsKey(foundURL))
                                 {
-                                     AppContext.FoundSocialURLs.Add(foundURL);
-
                                     Request request = new Request(DomainUtility.EnsureHTTPS(foundURL));
                                     RequestUtility.GetWebText(request);
                                     if (!request.Response.Code.Equals("200"))
