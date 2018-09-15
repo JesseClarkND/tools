@@ -9,19 +9,20 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Clark.Subdomain;
 using Clark.ContentScanner;
-using Clark.Subdomain.Utility;
 using System.Net.Mail;
 using System.Net;
 using System.IO;
 using Clark.Logger;
 using System.Threading;
 using AlternateTerritory.Extensions;
+using Clark.Common.Models;
+using Clark.Common.Utility;
 
 namespace AlternateTerritory
 {
     public partial class Form1 : Form
     {
-        private static int _threadCount=10;
+        private static int _threadCount=12;
         private static CountdownEvent _countdown;
 
         public Form1()
@@ -42,6 +43,8 @@ namespace AlternateTerritory
         private void _btnStart_Click(object sender, EventArgs e)
         {
             //string domain = _txtDomain.Text;
+            _btnStart.Text = "Service Started...";
+            _btnStart.Enabled = false;
             List<string> domains = File.ReadAllLines(Settings.SourceFile).ToList();
 
             foreach (string domain in domains)
@@ -55,20 +58,30 @@ namespace AlternateTerritory
                 if(File.Exists(existingFile))
                     knownSubdomains = File.ReadAllLines(existingFile).ToList();
 
-                List<string> subDomains = Hunter.Gather(domain, knownSubdomains);
+                List<string> subDomains = new List<string>();
 
-                Log("Subdomains found: " + subDomains.Count);
-                TextFileLogger.WriteOverwriteFile(Settings.ExistingDir, domain.Replace(".", "") + ".txt", subDomains);
+                if (System.IO.File.GetLastWriteTime(existingFile) > DateTime.Now.AddHours(-48) && knownSubdomains.Count != 0)
+                {
+                    subDomains = knownSubdomains;
+                    Log("Subdomains loaded from file: " + subDomains.Count);
+                }
+                else
+                {
+                    subDomains = Hunter.Gather(domain, knownSubdomains);
+                    Log("Subdomains found: " + subDomains.Count);
+                    TextFileLogger.WriteOverwriteFile(Settings.ExistingDir, domain.Replace(".", "") + ".txt", subDomains);
+                }
 
                 List<string> chunked = new List<string>();
                 foreach (List<string> subDomainChunk in subDomains.ChunkBy(_threadCount))
                 {
                     _countdown = new CountdownEvent(Math.Min(_threadCount,subDomainChunk.Count));
+
                     List<Thread> lstThreads = new List<Thread>();
 
                     foreach (string chunck in subDomainChunk)
                     {
-                        Thread th = new Thread(() => { TestSubdomain(chunck); });
+                        Thread th = new Thread(() => { TestDomain(chunck, true); });
                         lstThreads.Add(th);
                     }
 
@@ -80,14 +93,14 @@ namespace AlternateTerritory
             }
         }
 
-        private void TestSubdomain(string subDomain)
+        private void TestDomain(string address, bool signalEnd)
         {
             StringBuilder sb = new StringBuilder();
             try
             {
-                sb.Append("Checking: " + subDomain + Environment.NewLine);
+                sb.Append("Checking: " + address + Environment.NewLine);
                 WebPageRequest request = new WebPageRequest();
-                request.Address = subDomain;
+                request.Address = address;
 
                 WebPageLoader.Load(request);
 
@@ -121,7 +134,9 @@ namespace AlternateTerritory
                 sb.Append("!!!!!Exception: " + ex.Message + " Inner: "+inner);
             }
             Log(sb.ToString());
-            _countdown.Signal();
+
+            if(signalEnd)
+                _countdown.Signal();
         }
 
         private void CheckEngine(WebPageRequest request, StringBuilder sb)
@@ -164,12 +179,12 @@ namespace AlternateTerritory
 
             if (buckets.Count != 0)
             {
-                sb.Append("\tS3 Buckets Found! " + String.Join(", ", buckets.ToArray()) + "! Email sent." + Environment.NewLine);
-                SendEmail("S3 Buckets Used", request.Address + " appears to use buckets " + String.Join(", " + Environment.NewLine, buckets.ToArray()));
+                sb.Append("\tUnclaimed S3 Buckets Found! " + String.Join(", ", buckets.ToArray()) + "! Email sent." + Environment.NewLine);
+                SendEmail("Unclaimed  S3 Buckets Used", request.Address + " appears to use buckets " + String.Join(", " + Environment.NewLine, buckets.ToArray()));
             }
             else
             {
-                sb.Append("\tNo S3 buckets found." + Environment.NewLine);
+                sb.Append("\tNo Unclaimed S3 buckets found." + Environment.NewLine);
             }
 
             foreach (KeyValuePair<string, string> kvp in request.Response.Scripts)
@@ -273,5 +288,290 @@ namespace AlternateTerritory
                 smtp.Send(message);
             }     
         }
+
+        #region Testing Buttons
+        private void _btnS3Test_Click(object sender, EventArgs e)
+        {
+            //http://blackdoorsec.net/s3.html
+            string address = _txtDomain.Text;
+            StringBuilder sb = new StringBuilder();
+            try
+            {
+                sb.Append("Starting S3 Test : " + address + Environment.NewLine);
+                WebPageRequest request = new WebPageRequest();
+                request.Address = address;
+
+                WebPageLoader.Load(request);
+
+                if (request.Response.Body.Equals(String.Empty) && request.Response.TimeOut == false)
+                {
+                    sb.Append("\tNo body found." + Environment.NewLine);
+                }
+                else
+                {
+                    sb.Append("\tBody found." + Environment.NewLine);
+                    if (request.Response.TimeOut == false)
+                    {
+                    //    CheckEngine(request, sb);
+                        CheckBuckets(request, sb);
+                    //    CheckSocialMedia(request, sb);
+                    //    CheckServices(request, sb);
+                    //    CheckDefaultpages(request, sb);
+                    }
+                    else
+                    {
+                        sb.Append("\tTimed out"+Environment.NewLine);
+                    //    CheckBigIPService(request, sb);
+                    }
+
+                    //CheckPHPInfo(request.Address, sb);
+                }
+            }
+            catch (Exception ex)
+            {
+                string inner = "";
+                if (ex.InnerException != null)
+                    inner = ex.InnerException.Message;
+                sb.Append("!!!!!Exception: " + ex.Message + " Inner: " + inner);
+            }
+            Log(sb.ToString());
+        }
+
+
+
+        private void _btnSocialMediaTest_Click(object sender, EventArgs e)
+        {
+            string address = _txtDomain.Text;
+            StringBuilder sb = new StringBuilder();
+            try
+            {
+                sb.Append("Starting Social Media Test : " + address + Environment.NewLine);
+                WebPageRequest request = new WebPageRequest();
+                request.Address = address;
+
+                WebPageLoader.Load(request);
+
+                if (request.Response.Body.Equals(String.Empty) && request.Response.TimeOut == false)
+                {
+                    sb.Append("\tNo body found." + Environment.NewLine);
+                }
+                else
+                {
+                    sb.Append("\tBody found." + Environment.NewLine);
+                    if (request.Response.TimeOut == false)
+                    {
+                        //    CheckEngine(request, sb);
+                        // CheckBuckets(request, sb);
+                        CheckSocialMedia(request, sb);
+                        //    CheckServices(request, sb);
+                        //    CheckDefaultpages(request, sb);
+                    }
+                    else
+                    {
+                        sb.Append("\tTimed out" + Environment.NewLine);
+                        //    CheckBigIPService(request, sb);
+                    }
+
+                    //CheckPHPInfo(request.Address, sb);
+                }
+            }
+            catch (Exception ex)
+            {
+                string inner = "";
+                if (ex.InnerException != null)
+                    inner = ex.InnerException.Message;
+                sb.Append("!!!!!Exception: " + ex.Message + " Inner: " + inner);
+            }
+            Log(sb.ToString());
+        }
+
+        private void _btnSubdomainTakeoverTest_Click(object sender, EventArgs e)
+        {
+            string address = _txtDomain.Text;
+            StringBuilder sb = new StringBuilder();
+            try
+            {
+                sb.Append("Starting Subdomain Takeover Test : " + address + Environment.NewLine);
+                WebPageRequest request = new WebPageRequest();
+                request.Address = address;
+
+                WebPageLoader.Load(request);
+
+                if (request.Response.Body.Equals(String.Empty) && request.Response.TimeOut == false)
+                {
+                    sb.Append("\tNo body found." + Environment.NewLine);
+                }
+                else
+                {
+                    sb.Append("\tBody found." + Environment.NewLine);
+                    if (request.Response.TimeOut == false)
+                    {
+                        CheckEngine(request, sb);
+                        //CheckBuckets(request, sb);
+                        //CheckSocialMedia(request, sb);
+                        //    CheckServices(request, sb);
+                        //    CheckDefaultpages(request, sb);
+                    }
+                    else
+                    {
+                        sb.Append("\tTimed out" + Environment.NewLine);
+                        //    CheckBigIPService(request, sb);
+                    }
+
+                    //CheckPHPInfo(request.Address, sb);
+                }
+            }
+            catch (Exception ex)
+            {
+                string inner = "";
+                if (ex.InnerException != null)
+                    inner = ex.InnerException.Message;
+                sb.Append("!!!!!Exception: " + ex.Message + " Inner: " + inner);
+            }
+            Log(sb.ToString());
+        }
+
+
+        private void _btnPHPInfoTest_Click(object sender, EventArgs e)
+        {
+            string address = _txtDomain.Text;
+            StringBuilder sb = new StringBuilder();
+            try
+            {
+                sb.Append("Starting PHP Info Test : " + address + Environment.NewLine);
+                WebPageRequest request = new WebPageRequest();
+                request.Address = address;
+
+                WebPageLoader.Load(request);
+
+                if (request.Response.Body.Equals(String.Empty) && request.Response.TimeOut == false)
+                {
+                    sb.Append("\tNo body found." + Environment.NewLine);
+                }
+                else
+                {
+                    sb.Append("\tBody found." + Environment.NewLine);
+                    if (request.Response.TimeOut == false)
+                    {
+                        //CheckEngine(request, sb);
+                        //CheckBuckets(request, sb);
+                        //CheckSocialMedia(request, sb);
+                        //    CheckServices(request, sb);
+                        //    CheckDefaultpages(request, sb);
+                    }
+                    else
+                    {
+                        sb.Append("\tTimed out" + Environment.NewLine);
+                        //    CheckBigIPService(request, sb);
+                    }
+
+                    CheckPHPInfo(request.Address, sb);
+                }
+            }
+            catch (Exception ex)
+            {
+                string inner = "";
+                if (ex.InnerException != null)
+                    inner = ex.InnerException.Message;
+                sb.Append("!!!!!Exception: " + ex.Message + " Inner: " + inner);
+            }
+            Log(sb.ToString());
+        }
+
+
+
+        private void _btnDefaultTest_Click(object sender, EventArgs e)
+        {
+            string address = _txtDomain.Text;
+            StringBuilder sb = new StringBuilder();
+            try
+            {
+                sb.Append("Starting PHP Info Test : " + address + Environment.NewLine);
+                WebPageRequest request = new WebPageRequest();
+                request.Address = address;
+
+                WebPageLoader.Load(request);
+
+                if (request.Response.Body.Equals(String.Empty) && request.Response.TimeOut == false)
+                {
+                    sb.Append("\tNo body found." + Environment.NewLine);
+                }
+                else
+                {
+                    sb.Append("\tBody found." + Environment.NewLine);
+                    if (request.Response.TimeOut == false)
+                    {
+                        //CheckEngine(request, sb);
+                        //CheckBuckets(request, sb);
+                        //CheckSocialMedia(request, sb);
+                        //    CheckServices(request, sb);
+                        CheckDefaultpages(request, sb);
+                    }
+                    else
+                    {
+                        sb.Append("\tTimed out" + Environment.NewLine);
+                        //    CheckBigIPService(request, sb);
+                    }
+
+                    //CheckPHPInfo(request.Address, sb);
+                }
+            }
+            catch (Exception ex)
+            {
+                string inner = "";
+                if (ex.InnerException != null)
+                    inner = ex.InnerException.Message;
+                sb.Append("!!!!!Exception: " + ex.Message + " Inner: " + inner);
+            }
+            Log(sb.ToString());
+        }
+
+        private void _btnServicesTest_Click(object sender, EventArgs e)
+        {
+            string address = _txtDomain.Text;
+            StringBuilder sb = new StringBuilder();
+            try
+            {
+                sb.Append("Starting PHP Info Test : " + address + Environment.NewLine);
+                WebPageRequest request = new WebPageRequest();
+                request.Address = address;
+
+                WebPageLoader.Load(request);
+
+                if (request.Response.Body.Equals(String.Empty) && request.Response.TimeOut == false)
+                {
+                    sb.Append("\tNo body found." + Environment.NewLine);
+                }
+                else
+                {
+                    sb.Append("\tBody found." + Environment.NewLine);
+                    if (request.Response.TimeOut == false)
+                    {
+                        //CheckEngine(request, sb);
+                        //CheckBuckets(request, sb);
+                        //CheckSocialMedia(request, sb);
+                        CheckServices(request, sb);
+                        //CheckDefaultpages(request, sb);
+                    }
+                    else
+                    {
+                        sb.Append("\tTimed out" + Environment.NewLine);
+                        //    CheckBigIPService(request, sb);
+                    }
+
+                    //CheckPHPInfo(request.Address, sb);
+                }
+            }
+            catch (Exception ex)
+            {
+                string inner = "";
+                if (ex.InnerException != null)
+                    inner = ex.InnerException.Message;
+                sb.Append("!!!!!Exception: " + ex.Message + " Inner: " + inner);
+            }
+            Log(sb.ToString());
+        }
+
+        #endregion
     }
 }

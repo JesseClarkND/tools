@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clark.ContentScanner", "..\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clark.Logger", "..\utilities\Clark.Logger\Clark.Logger.csproj", "{B77CFB57-FF5A-4637-BFBF-628289CDD303}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clark.Common", "..\utilities\Clark.Common\Clark.Common.csproj", "{890E5D7C-BCDE-48D7-AE97-7503B184735B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{B77CFB57-FF5A-4637-BFBF-628289CDD303}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B77CFB57-FF5A-4637-BFBF-628289CDD303}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B77CFB57-FF5A-4637-BFBF-628289CDD303}.Release|Any CPU.Build.0 = Release|Any CPU
+		{890E5D7C-BCDE-48D7-AE97-7503B184735B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{890E5D7C-BCDE-48D7-AE97-7503B184735B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{890E5D7C-BCDE-48D7-AE97-7503B184735B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{890E5D7C-BCDE-48D7-AE97-7503B184735B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -41,5 +47,6 @@ Global
 		{C6AECA42-BA9B-477B-B97D-7320325BAA40} = {FC64810E-1F99-4D72-B611-E01EE7DEA1BC}
 		{8B86B3A0-ED41-4D23-90B9-CFCACFD98FCE} = {FC64810E-1F99-4D72-B611-E01EE7DEA1BC}
 		{B77CFB57-FF5A-4637-BFBF-628289CDD303} = {FC64810E-1F99-4D72-B611-E01EE7DEA1BC}
+		{890E5D7C-BCDE-48D7-AE97-7503B184735B} = {FC64810E-1F99-4D72-B611-E01EE7DEA1BC}
 	EndGlobalSection
 EndGlobal

@@ -80,6 +80,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\utilities\Clark.Common\Clark.Common.csproj">
+      <Project>{890e5d7c-bcde-48d7-ae97-7503b184735b}</Project>
+      <Name>Clark.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\utilities\Clark.ContentScanner\Clark.ContentScanner.csproj">
       <Project>{8b86b3a0-ed41-4d23-90b9-cfcacfd98fce}</Project>
       <Name>Clark.ContentScanner</Name>
