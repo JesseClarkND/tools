@@ -17,12 +17,16 @@ using System.Threading;
 using AlternateTerritory.Extensions;
 using Clark.Common.Models;
 using Clark.Common.Utility;
+using Clark.WebArchiveCrawler;
+using Clark.WebArchiveCrawler.Model;
+using Core.MySQL.Accessor;
+using MySql.Data.MySqlClient;
 
 namespace AlternateTerritory
 {
     public partial class Form1 : Form
     {
-        private static int _threadCount=12;
+        private static int _threadCount=20;
         private static CountdownEvent _countdown;
 
         public Form1()
@@ -40,6 +44,11 @@ namespace AlternateTerritory
             TextFileLogger.Log(Settings.LogDir, DateTime.Now.ToString("yyyy-MM-dd") + ".txt", log); 
         }
 
+        private void LogTest(string log)
+        {
+            _rtbLog.Text = log+Environment.NewLine;
+        }
+
         private void _btnStart_Click(object sender, EventArgs e)
         {
             //string domain = _txtDomain.Text;
@@ -50,7 +59,7 @@ namespace AlternateTerritory
             foreach (string domain in domains)
             {
                 Log("========================");
-                Log("Starting " + domain);
+                Log("Starting " + domain + " at "+DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString());
                 Log("========================");
 
                 List<string> knownSubdomains = new List<string>();
@@ -60,14 +69,14 @@ namespace AlternateTerritory
 
                 List<string> subDomains = new List<string>();
 
-                if (System.IO.File.GetLastWriteTime(existingFile) > DateTime.Now.AddHours(-48) && knownSubdomains.Count != 0)
+                if (System.IO.File.GetLastWriteTime(existingFile) > DateTime.Now.AddDays(-7) && knownSubdomains.Count != 0)
                 {
                     subDomains = knownSubdomains;
                     Log("Subdomains loaded from file: " + subDomains.Count);
                 }
                 else
                 {
-                    subDomains = Hunter.Gather(domain, knownSubdomains);
+                    subDomains = Hunter.GatherAll(domain, knownSubdomains);
                     Log("Subdomains found: " + subDomains.Count);
                     TextFileLogger.WriteOverwriteFile(Settings.ExistingDir, domain.Replace(".", "") + ".txt", subDomains);
                 }
@@ -117,14 +126,20 @@ namespace AlternateTerritory
                         CheckSocialMedia(request, sb);
                         CheckServices(request, sb);
                         CheckDefaultpages(request, sb);
+                        CheckIndexOf(request, sb);
                     }
                     else
                     {
-                        CheckBigIPService(request, sb);
+                       // CheckBigIPService(request, sb);
                     }
-
-                    CheckPHPInfo(request.Address, sb);
                 }
+
+                CheckForFileType(request.Address, sb, "swf");
+                CheckForFileType(request.Address, sb, "php");
+                CheckForFileType(request.Address, sb, "xml");
+                CheckForFileType(request.Address, sb, "conf");
+                CheckPHPInfo(request.Address, sb);
+                CheckKnownAttackFiles(request.Address, sb);
             }
             catch (Exception ex)
             {
@@ -139,6 +154,33 @@ namespace AlternateTerritory
                 _countdown.Signal();
         }
 
+
+        private static void SendEmail(string subject, string body)
+        {
+            var fromAddress = new MailAddress("hogarth45scanners@gmail.com", Settings.ServerName);
+            var toAddress = new MailAddress("hogarth45@gmail.com", "To Name");
+            string fromPassword = "hogarth45scanners@1";
+
+            var smtp = new SmtpClient
+            {
+                Host = "smtp.gmail.com",
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+            };
+            using (var message = new MailMessage(fromAddress, toAddress)
+            {
+                Subject = subject,
+                Body = body
+            })
+            {
+                smtp.Send(message);
+            }
+        }
+
+        #region
         private void CheckEngine(WebPageRequest request, StringBuilder sb)
         {
             string engine = SubdomainTakeover.Check(request.Response.Body);
@@ -236,7 +278,7 @@ namespace AlternateTerritory
 
         private void CheckDefaultpages(WebPageRequest request, StringBuilder sb)
         {
-            string defaultPage = Services.Check(request.Response.Body);
+            string defaultPage = DefaultPage.Check(request.Response.Body);
 
             if (!String.IsNullOrEmpty(defaultPage))
             {
@@ -260,34 +302,68 @@ namespace AlternateTerritory
             }
             else
             {
-                sb.Append("\tNo default pages found." + Environment.NewLine);
+                sb.Append("\tNo phpinfo pages found." + Environment.NewLine);
             }
         }
 
+        private void CheckForFileType(string url, StringBuilder sb, string fileExtension)
+        {
+            try
+            {
+                CrawlRequest request = new CrawlRequest();
+                request.FileType = fileExtension;
+                request.Address = url.Trim('/').Replace("https://", "").Replace("http://", "");
+                request.Limit = 50;
+                request.FindAll = true;
+                List<string> info = Crawler.SearchFileType(request, true);
 
-        private static void SendEmail(string subject, string body) {
-            var fromAddress = new MailAddress("hogarth45scanners@gmail.com", Settings.ServerName);
-            var toAddress = new MailAddress("hogarth45@gmail.com", "To Name");
-            string fromPassword = "hogarth45scanners@1";
-
-            var smtp = new SmtpClient
+                if (info.Count != 0)
+                {
+                    sb.Append("\tSWF Files Found! " + info + "! Email sent." + Environment.NewLine);
+                    SendEmail("\tSWF Files Found ", url + " appears to have swf files: " + Environment.NewLine + String.Join(Environment.NewLine, info.ToArray()));
+                }
+                else
+                {
+                    sb.Append("\tNo SWF files found." + Environment.NewLine);
+                }
+            }
+            catch (Exception ex)
             {
-                Host = "smtp.gmail.com",
-                Port = 587,
-                EnableSsl = true,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
-            };
-            using (var message = new MailMessage(fromAddress, toAddress)
-            {
-                Subject = subject,
-                Body = body
-            })
-            {
-                smtp.Send(message);
-            }     
+                throw new Exception("SWF exception: " + ex.Message);
+            }
         }
+
+        private void CheckIndexOf(WebPageRequest request, StringBuilder sb)
+        {
+            bool indexOf = IndexOf.Check(request.Response.Body);
+
+            if (indexOf)
+            {
+                sb.Append("\tDirectory Traversal Found! " + request.Address + "! Email sent." + Environment.NewLine);
+                SendEmail("\tDirectory Traversal Found", request.Address + " appears to have directory traversal enabled.");
+            }
+            else
+            {
+                sb.Append("\tNo directory traversal found." + Environment.NewLine);
+            }
+        }
+
+        private void CheckKnownAttackFiles(string url, StringBuilder sb)
+        {
+            List<string> attackFiles = KnownAttackFiles.Check(url);
+
+            if (attackFiles.Count!=0)
+            {
+                sb.Append("\tKnown Attack Files Found! " + url + "! Email sent." + Environment.NewLine + Environment.NewLine + (String.Join(Environment.NewLine, attackFiles.ToArray())));
+                SendEmail("\tKnown Attack Files Found ", url + " appears to have known attack files: "+Environment.NewLine +(String.Join(Environment.NewLine, attackFiles.ToArray())));
+            }
+            else
+            {
+                sb.Append("\tNo known attack files found." + Environment.NewLine);
+            }
+        }
+
+        #endregion
 
         #region Testing Buttons
         private void _btnS3Test_Click(object sender, EventArgs e)
@@ -334,10 +410,8 @@ namespace AlternateTerritory
                     inner = ex.InnerException.Message;
                 sb.Append("!!!!!Exception: " + ex.Message + " Inner: " + inner);
             }
-            Log(sb.ToString());
+            LogTest(sb.ToString());
         }
-
-
 
         private void _btnSocialMediaTest_Click(object sender, EventArgs e)
         {
@@ -382,7 +456,7 @@ namespace AlternateTerritory
                     inner = ex.InnerException.Message;
                 sb.Append("!!!!!Exception: " + ex.Message + " Inner: " + inner);
             }
-            Log(sb.ToString());
+            LogTest(sb.ToString());
         }
 
         private void _btnSubdomainTakeoverTest_Click(object sender, EventArgs e)
@@ -428,9 +502,8 @@ namespace AlternateTerritory
                     inner = ex.InnerException.Message;
                 sb.Append("!!!!!Exception: " + ex.Message + " Inner: " + inner);
             }
-            Log(sb.ToString());
+            LogTest(sb.ToString());
         }
-
 
         private void _btnPHPInfoTest_Click(object sender, EventArgs e)
         {
@@ -464,9 +537,10 @@ namespace AlternateTerritory
                         sb.Append("\tTimed out" + Environment.NewLine);
                         //    CheckBigIPService(request, sb);
                     }
-
-                    CheckPHPInfo(request.Address, sb);
                 }
+
+                CheckPHPInfo(request.Address, sb);
+
             }
             catch (Exception ex)
             {
@@ -475,10 +549,8 @@ namespace AlternateTerritory
                     inner = ex.InnerException.Message;
                 sb.Append("!!!!!Exception: " + ex.Message + " Inner: " + inner);
             }
-            Log(sb.ToString());
+            LogTest(sb.ToString());
         }
-
-
 
         private void _btnDefaultTest_Click(object sender, EventArgs e)
         {
@@ -523,7 +595,7 @@ namespace AlternateTerritory
                     inner = ex.InnerException.Message;
                 sb.Append("!!!!!Exception: " + ex.Message + " Inner: " + inner);
             }
-            Log(sb.ToString());
+            LogTest(sb.ToString());
         }
 
         private void _btnServicesTest_Click(object sender, EventArgs e)
@@ -569,7 +641,207 @@ namespace AlternateTerritory
                     inner = ex.InnerException.Message;
                 sb.Append("!!!!!Exception: " + ex.Message + " Inner: " + inner);
             }
-            Log(sb.ToString());
+            LogTest(sb.ToString());
+        }
+
+        private void _btnWebArchiveTest_Click(object sender, EventArgs e)
+        {
+            string address = _txtDomain.Text;
+            StringBuilder sb = new StringBuilder();
+            try
+            {
+                sb.Append("Starting WebArchive Test: " + address + Environment.NewLine);
+                WebPageRequest request = new WebPageRequest();
+                request.Address = address;
+
+              //  WebPageLoader.Load(request);
+
+                CheckForFileType(request.Address, sb, "html");
+            }
+            catch (Exception ex)
+            {
+                string inner = "";
+                if (ex.InnerException != null)
+                    inner = ex.InnerException.Message;
+                sb.Append("!!!!!Exception: " + ex.Message + " Inner: " + inner);
+            }
+            LogTest(sb.ToString());
+        }
+
+        private void _btnDirectoryTraversal_Click(object sender, EventArgs e)
+        {
+            string address = _txtDomain.Text;
+            StringBuilder sb = new StringBuilder();
+            try
+            {
+                sb.Append("Starting PHP Info Test : " + address + Environment.NewLine);
+                WebPageRequest request = new WebPageRequest();
+                request.Address = address;
+
+                WebPageLoader.Load(request);
+
+                if (request.Response.Body.Equals(String.Empty) && request.Response.TimeOut == false)
+                {
+                    sb.Append("\tNo body found." + Environment.NewLine);
+                }
+                else
+                {
+                    sb.Append("\tBody found." + Environment.NewLine);
+
+                    CheckIndexOf(request, sb);
+                }
+            }
+            catch (Exception ex)
+            {
+                string inner = "";
+                if (ex.InnerException != null)
+                    inner = ex.InnerException.Message;
+                sb.Append("!!!!!Exception: " + ex.Message + " Inner: " + inner);
+            }
+            LogTest(sb.ToString());
+        }
+
+        private void _btnKnownAttackTest_Click(object sender, EventArgs e)
+        {
+            string address = _txtDomain.Text;
+            StringBuilder sb = new StringBuilder();
+            try
+            {
+                sb.Append("Starting Known Attack Files: " + address + Environment.NewLine);
+                WebPageRequest request = new WebPageRequest();
+                request.Address = address;
+
+                WebPageLoader.Load(request);
+
+                if (request.Response.Body.Equals(String.Empty) && request.Response.TimeOut == false)
+                {
+                    sb.Append("\tNo body found." + Environment.NewLine);
+                }
+                else
+                {
+                    sb.Append("\tBody found." + Environment.NewLine);
+
+                }
+
+                CheckKnownAttackFiles(request.Address, sb);
+
+            }
+            catch (Exception ex)
+            {
+                string inner = "";
+                if (ex.InnerException != null)
+                    inner = ex.InnerException.Message;
+                sb.Append("!!!!!Exception: " + ex.Message + " Inner: " + inner);
+            }
+            LogTest(sb.ToString());
+        }
+
+        #endregion
+
+        #region Test Subdomain
+        private void _btnFindSubomainsTest_Click(object sender, EventArgs e)
+        {
+            string domain = _txtDomain.Text;
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Testing findsubdomains.com...");
+            List<string> subDomains = Hunter.Gather_FindSubdomains(domain);
+            sb.Append("Subdomains found: " + subDomains.Count);
+            foreach (string sub in subDomains.Take(5))
+            {
+                sb.Append(sub+Environment.NewLine);
+            }
+
+            LogTest(sb.ToString());
+        }
+
+
+        private void _btnNetcraftTest_Click(object sender, EventArgs e)
+        {
+            string domain = _txtDomain.Text;
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Testing netcraft.com...");
+            List<string> subDomains = Hunter.Gather_NetCraft(domain);
+            sb.Append("Subdomains found: " + subDomains.Count);
+            foreach (string sub in subDomains.Take(5))
+            {
+                sb.Append(sub + Environment.NewLine);
+            }
+
+            LogTest(sb.ToString());
+        }
+
+        private void _btnSecTrailsTest_Click(object sender, EventArgs e)
+        {
+            string domain = _txtDomain.Text;
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Testing Security Trails API...");
+            List<string> subDomains = Hunter.Gather_SecurityTrails(domain);
+            sb.Append("Subdomains found: " + subDomains.Count);
+            foreach (string sub in subDomains.Take(5))
+            {
+                sb.Append(sub + Environment.NewLine);
+            }
+
+            LogTest(sb.ToString());
+        }
+
+        #endregion
+
+        #region Database Tests
+        private void _btnDatabaseConnectivityTest_Click(object sender, EventArgs e)
+        {
+            StringBuilder sb = new StringBuilder();
+            MySqlConnection conn = null;
+            try
+            {
+                conn = DatabaseManager.GetConnection();
+                sb.Append("Testing..." + Environment.NewLine);
+                sb.Append(conn.ConnectionString + Environment.NewLine);
+                conn.Open();
+                sb.Append("Looks Good!");
+            }
+            catch (ArgumentException a_ex)
+            {
+                sb.Append("Check the Connection String." + Environment.NewLine);
+                sb.Append(a_ex.Message);
+            }
+            catch (MySqlException ex)
+            {
+                /*string sqlErrorMessage = "Message: " + ex.Message + "\n" +
+                "Source: " + ex.Source + "\n" +
+                "Number: " + ex.Number;
+                Console.WriteLine(sqlErrorMessage);
+                */
+                switch (ex.Number)
+                {
+                    //http://dev.mysql.com/doc/refman/5.0/en/error-messages-server.html
+                    case 1042:
+                        sb.Append("Unable to connect to any of the specified MySQL hosts (Check Server,Port)" + Environment.NewLine);
+                        break;
+                    case 0:
+                        sb.Append("Access denied (Check DB name,username,password)" + Environment.NewLine);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                sb.Append("Some unknown error occurred."+Environment.NewLine);
+                sb.Append(ex.Message);
+            }
+            finally
+            {
+                if (conn.State == ConnectionState.Open)
+                {
+                    conn.Close();
+                }
+            }
+
+            LogTest(sb.ToString());
         }
 
         #endregion

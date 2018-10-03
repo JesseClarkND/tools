@@ -36,11 +36,19 @@
             this._btnPHPInfoTest = new System.Windows.Forms.Button();
             this._btnDefaultTest = new System.Windows.Forms.Button();
             this._btnServicesTest = new System.Windows.Forms.Button();
+            this._btnWebArchiveTest = new System.Windows.Forms.Button();
+            this._rtbLog = new System.Windows.Forms.RichTextBox();
+            this._btnDirectoryTraversal = new System.Windows.Forms.Button();
+            this._btnKnownAttackTest = new System.Windows.Forms.Button();
+            this._btnFindSubomainsTest = new System.Windows.Forms.Button();
+            this._btnNetcraftTest = new System.Windows.Forms.Button();
+            this._btnSecTrailsTest = new System.Windows.Forms.Button();
+            this._btnDatabaseConnectivityTest = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // _btnStart
             // 
-            this._btnStart.Location = new System.Drawing.Point(12, 292);
+            this._btnStart.Location = new System.Drawing.Point(941, 386);
             this._btnStart.Name = "_btnStart";
             this._btnStart.Size = new System.Drawing.Size(75, 57);
             this._btnStart.TabIndex = 0;
@@ -50,14 +58,14 @@
             // 
             // _txtDomain
             // 
-            this._txtDomain.Location = new System.Drawing.Point(28, 13);
+            this._txtDomain.Location = new System.Drawing.Point(22, 12);
             this._txtDomain.Name = "_txtDomain";
             this._txtDomain.Size = new System.Drawing.Size(184, 20);
             this._txtDomain.TabIndex = 1;
             // 
             // _btnS3Test
             // 
-            this._btnS3Test.Location = new System.Drawing.Point(575, 10);
+            this._btnS3Test.Location = new System.Drawing.Point(118, 47);
             this._btnS3Test.Name = "_btnS3Test";
             this._btnS3Test.Size = new System.Drawing.Size(88, 47);
             this._btnS3Test.TabIndex = 2;
@@ -67,7 +75,7 @@
             // 
             // _btnSocialMediaTest
             // 
-            this._btnSocialMediaTest.Location = new System.Drawing.Point(575, 63);
+            this._btnSocialMediaTest.Location = new System.Drawing.Point(118, 100);
             this._btnSocialMediaTest.Name = "_btnSocialMediaTest";
             this._btnSocialMediaTest.Size = new System.Drawing.Size(88, 47);
             this._btnSocialMediaTest.TabIndex = 3;
@@ -77,7 +85,7 @@
             // 
             // _btnSubdomainTakeoverTest
             // 
-            this._btnSubdomainTakeoverTest.Location = new System.Drawing.Point(575, 116);
+            this._btnSubdomainTakeoverTest.Location = new System.Drawing.Point(118, 153);
             this._btnSubdomainTakeoverTest.Name = "_btnSubdomainTakeoverTest";
             this._btnSubdomainTakeoverTest.Size = new System.Drawing.Size(88, 47);
             this._btnSubdomainTakeoverTest.TabIndex = 4;
@@ -87,7 +95,7 @@
             // 
             // _btnPHPInfoTest
             // 
-            this._btnPHPInfoTest.Location = new System.Drawing.Point(575, 169);
+            this._btnPHPInfoTest.Location = new System.Drawing.Point(118, 206);
             this._btnPHPInfoTest.Name = "_btnPHPInfoTest";
             this._btnPHPInfoTest.Size = new System.Drawing.Size(88, 47);
             this._btnPHPInfoTest.TabIndex = 5;
@@ -97,7 +105,7 @@
             // 
             // _btnDefaultTest
             // 
-            this._btnDefaultTest.Location = new System.Drawing.Point(575, 222);
+            this._btnDefaultTest.Location = new System.Drawing.Point(118, 259);
             this._btnDefaultTest.Name = "_btnDefaultTest";
             this._btnDefaultTest.Size = new System.Drawing.Size(88, 47);
             this._btnDefaultTest.TabIndex = 6;
@@ -107,7 +115,7 @@
             // 
             // _btnServicesTest
             // 
-            this._btnServicesTest.Location = new System.Drawing.Point(575, 275);
+            this._btnServicesTest.Location = new System.Drawing.Point(24, 100);
             this._btnServicesTest.Name = "_btnServicesTest";
             this._btnServicesTest.Size = new System.Drawing.Size(88, 47);
             this._btnServicesTest.TabIndex = 7;
@@ -115,11 +123,97 @@
             this._btnServicesTest.UseVisualStyleBackColor = true;
             this._btnServicesTest.Click += new System.EventHandler(this._btnServicesTest_Click);
             // 
+            // _btnWebArchiveTest
+            // 
+            this._btnWebArchiveTest.Location = new System.Drawing.Point(24, 47);
+            this._btnWebArchiveTest.Name = "_btnWebArchiveTest";
+            this._btnWebArchiveTest.Size = new System.Drawing.Size(88, 47);
+            this._btnWebArchiveTest.TabIndex = 8;
+            this._btnWebArchiveTest.Text = "Test WebArchive Crawl";
+            this._btnWebArchiveTest.UseVisualStyleBackColor = true;
+            this._btnWebArchiveTest.Click += new System.EventHandler(this._btnWebArchiveTest_Click);
+            // 
+            // _rtbLog
+            // 
+            this._rtbLog.Location = new System.Drawing.Point(234, 12);
+            this._rtbLog.Name = "_rtbLog";
+            this._rtbLog.Size = new System.Drawing.Size(501, 337);
+            this._rtbLog.TabIndex = 9;
+            this._rtbLog.Text = "";
+            // 
+            // _btnDirectoryTraversal
+            // 
+            this._btnDirectoryTraversal.Location = new System.Drawing.Point(22, 153);
+            this._btnDirectoryTraversal.Name = "_btnDirectoryTraversal";
+            this._btnDirectoryTraversal.Size = new System.Drawing.Size(88, 47);
+            this._btnDirectoryTraversal.TabIndex = 10;
+            this._btnDirectoryTraversal.Text = "Test Directory Traversal";
+            this._btnDirectoryTraversal.UseVisualStyleBackColor = true;
+            this._btnDirectoryTraversal.Click += new System.EventHandler(this._btnDirectoryTraversal_Click);
+            // 
+            // _btnKnownAttackTest
+            // 
+            this._btnKnownAttackTest.Location = new System.Drawing.Point(22, 206);
+            this._btnKnownAttackTest.Name = "_btnKnownAttackTest";
+            this._btnKnownAttackTest.Size = new System.Drawing.Size(88, 47);
+            this._btnKnownAttackTest.TabIndex = 11;
+            this._btnKnownAttackTest.Text = "Test Known Attack Files";
+            this._btnKnownAttackTest.UseVisualStyleBackColor = true;
+            this._btnKnownAttackTest.Click += new System.EventHandler(this._btnKnownAttackTest_Click);
+            // 
+            // _btnFindSubomainsTest
+            // 
+            this._btnFindSubomainsTest.Location = new System.Drawing.Point(741, 12);
+            this._btnFindSubomainsTest.Name = "_btnFindSubomainsTest";
+            this._btnFindSubomainsTest.Size = new System.Drawing.Size(275, 28);
+            this._btnFindSubomainsTest.TabIndex = 12;
+            this._btnFindSubomainsTest.Text = "findsubdomains.com";
+            this._btnFindSubomainsTest.UseVisualStyleBackColor = true;
+            this._btnFindSubomainsTest.Click += new System.EventHandler(this._btnFindSubomainsTest_Click);
+            // 
+            // _btnNetcraftTest
+            // 
+            this._btnNetcraftTest.Location = new System.Drawing.Point(741, 46);
+            this._btnNetcraftTest.Name = "_btnNetcraftTest";
+            this._btnNetcraftTest.Size = new System.Drawing.Size(275, 28);
+            this._btnNetcraftTest.TabIndex = 13;
+            this._btnNetcraftTest.Text = "netcraft";
+            this._btnNetcraftTest.UseVisualStyleBackColor = true;
+            this._btnNetcraftTest.Click += new System.EventHandler(this._btnNetcraftTest_Click);
+            // 
+            // _btnSecTrailsTest
+            // 
+            this._btnSecTrailsTest.Location = new System.Drawing.Point(741, 80);
+            this._btnSecTrailsTest.Name = "_btnSecTrailsTest";
+            this._btnSecTrailsTest.Size = new System.Drawing.Size(275, 28);
+            this._btnSecTrailsTest.TabIndex = 14;
+            this._btnSecTrailsTest.Text = "Security Trails";
+            this._btnSecTrailsTest.UseVisualStyleBackColor = true;
+            this._btnSecTrailsTest.Click += new System.EventHandler(this._btnSecTrailsTest_Click);
+            // 
+            // _btnDatabaseConnectivityTest
+            // 
+            this._btnDatabaseConnectivityTest.Location = new System.Drawing.Point(12, 396);
+            this._btnDatabaseConnectivityTest.Name = "_btnDatabaseConnectivityTest";
+            this._btnDatabaseConnectivityTest.Size = new System.Drawing.Size(88, 47);
+            this._btnDatabaseConnectivityTest.TabIndex = 15;
+            this._btnDatabaseConnectivityTest.Text = "Test Database Connect";
+            this._btnDatabaseConnectivityTest.UseVisualStyleBackColor = true;
+            this._btnDatabaseConnectivityTest.Click += new System.EventHandler(this._btnDatabaseConnectivityTest_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(675, 361);
+            this.ClientSize = new System.Drawing.Size(1028, 455);
+            this.Controls.Add(this._btnDatabaseConnectivityTest);
+            this.Controls.Add(this._btnSecTrailsTest);
+            this.Controls.Add(this._btnNetcraftTest);
+            this.Controls.Add(this._btnFindSubomainsTest);
+            this.Controls.Add(this._btnKnownAttackTest);
+            this.Controls.Add(this._btnDirectoryTraversal);
+            this.Controls.Add(this._rtbLog);
+            this.Controls.Add(this._btnWebArchiveTest);
             this.Controls.Add(this._btnServicesTest);
             this.Controls.Add(this._btnDefaultTest);
             this.Controls.Add(this._btnPHPInfoTest);
@@ -146,6 +240,14 @@
         private System.Windows.Forms.Button _btnPHPInfoTest;
         private System.Windows.Forms.Button _btnDefaultTest;
         private System.Windows.Forms.Button _btnServicesTest;
+        private System.Windows.Forms.Button _btnWebArchiveTest;
+        private System.Windows.Forms.RichTextBox _rtbLog;
+        private System.Windows.Forms.Button _btnDirectoryTraversal;
+        private System.Windows.Forms.Button _btnKnownAttackTest;
+        private System.Windows.Forms.Button _btnFindSubomainsTest;
+        private System.Windows.Forms.Button _btnNetcraftTest;
+        private System.Windows.Forms.Button _btnSecTrailsTest;
+        private System.Windows.Forms.Button _btnDatabaseConnectivityTest;
     }
 }
 

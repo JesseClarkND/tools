@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9FE4A16F-D451-489E-BE91-0A20E4221986}</ProjectGuid>
+    <ProjectGuid>{01D49325-DA1D-48E8-9954-70526429FADB}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AlternateTerritory</RootNamespace>
-    <AssemblyName>AlternateTerritory</AssemblyName>
+    <RootNamespace>DbPrimer</RootNamespace>
+    <AssemblyName>DbPrimer</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -50,18 +50,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions\ListExtensions.cs" />
-    <Compile Include="Settings.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\_frmAddDomain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\_frmAddDomain.Designer.cs">
+      <DependentUpon>_frmAddDomain.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\_frmAddDomain.resx">
+      <DependentUpon>_frmAddDomain.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -86,36 +93,18 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\components\Clark.Domain.Component\Clark.Domain.Component.csproj">
+      <Project>{0fbca027-5dd6-46e6-8e09-9f467ce35cbb}</Project>
+      <Name>Clark.Domain.Component</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\components\Clark.Domain.Data\Clark.Domain.Data.csproj">
+      <Project>{77ef616a-2def-4048-b188-1187c49c596f}</Project>
+      <Name>Clark.Domain.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Core\Core.MySQL\Core.MySQL.Accessor\Core.MySQL.Accessor.csproj">
       <Project>{b660952f-f570-4b20-bd5f-f3b600dd0f55}</Project>
       <Name>Core.MySQL.Accessor</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\utilities\Clark.Common\Clark.Common.csproj">
-      <Project>{890e5d7c-bcde-48d7-ae97-7503b184735b}</Project>
-      <Name>Clark.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\utilities\Clark.ContentScanner\Clark.ContentScanner.csproj">
-      <Project>{8b86b3a0-ed41-4d23-90b9-cfcacfd98fce}</Project>
-      <Name>Clark.ContentScanner</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\utilities\Clark.Logger\Clark.Logger.csproj">
-      <Project>{b77cfb57-ff5a-4637-bfbf-628289cdd303}</Project>
-      <Name>Clark.Logger</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\utilities\Clark.Subdomain\Clark.Subdomain.csproj">
-      <Project>{c6aeca42-ba9b-477b-b97d-7320325baa40}</Project>
-      <Name>Clark.Subdomain</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\utilities\Clark.WebArchive\Clark.WebArchive.csproj">
-      <Project>{c28f74be-681b-4628-a06e-39c5444872fb}</Project>
-      <Name>Clark.WebArchive</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Settings.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
