@@ -1,7 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<root>
-  <Server>Home Computer</Server>
-  <Logs>C:\Alternative\Logs</Logs>
-  <Existing>C:\Alternative\Existing</Existing>
-  <Source>C:\Alternative\Source\doc.txt</Source>
-</root>

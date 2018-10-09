@@ -200,6 +200,7 @@
             this._btnCancel.TabIndex = 13;
             this._btnCancel.Text = "Cancel";
             this._btnCancel.UseVisualStyleBackColor = true;
+            this._btnCancel.Click += new System.EventHandler(this._btnCancel_Click);
             // 
             // _frmAddDomain
             // 

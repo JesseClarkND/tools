@@ -34,6 +34,11 @@
             this._btnDumpDomains = new System.Windows.Forms.Button();
             this._btnInitialize = new System.Windows.Forms.Button();
             this._btnBackup = new System.Windows.Forms.Button();
+            this._btnAddSubdomain = new System.Windows.Forms.Button();
+            this._btnProgramLoad = new System.Windows.Forms.Button();
+            this._btnLoadText = new System.Windows.Forms.Button();
+            this._btnInitSubdomain = new System.Windows.Forms.Button();
+            this._btnFindSubdomains = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // _btnAddDomain
@@ -93,11 +98,66 @@
             this._btnBackup.Text = "Backup Database";
             this._btnBackup.UseVisualStyleBackColor = true;
             // 
+            // _btnAddSubdomain
+            // 
+            this._btnAddSubdomain.Location = new System.Drawing.Point(12, 50);
+            this._btnAddSubdomain.Name = "_btnAddSubdomain";
+            this._btnAddSubdomain.Size = new System.Drawing.Size(112, 31);
+            this._btnAddSubdomain.TabIndex = 6;
+            this._btnAddSubdomain.Text = "Add Subdomain";
+            this._btnAddSubdomain.UseVisualStyleBackColor = true;
+            this._btnAddSubdomain.Click += new System.EventHandler(this._btnAddSubdomain_Click);
+            // 
+            // _btnProgramLoad
+            // 
+            this._btnProgramLoad.Location = new System.Drawing.Point(809, 272);
+            this._btnProgramLoad.Name = "_btnProgramLoad";
+            this._btnProgramLoad.Size = new System.Drawing.Size(112, 53);
+            this._btnProgramLoad.TabIndex = 7;
+            this._btnProgramLoad.Text = "Init Domains From JSON";
+            this._btnProgramLoad.UseVisualStyleBackColor = true;
+            this._btnProgramLoad.Click += new System.EventHandler(this._btnProgramLoad_Click);
+            // 
+            // _btnLoadText
+            // 
+            this._btnLoadText.Location = new System.Drawing.Point(809, 200);
+            this._btnLoadText.Name = "_btnLoadText";
+            this._btnLoadText.Size = new System.Drawing.Size(112, 55);
+            this._btnLoadText.TabIndex = 8;
+            this._btnLoadText.Text = "Init Domains From Text";
+            this._btnLoadText.UseVisualStyleBackColor = true;
+            this._btnLoadText.Click += new System.EventHandler(this._btnLoadText_Click);
+            // 
+            // _btnInitSubdomain
+            // 
+            this._btnInitSubdomain.Location = new System.Drawing.Point(809, 127);
+            this._btnInitSubdomain.Name = "_btnInitSubdomain";
+            this._btnInitSubdomain.Size = new System.Drawing.Size(112, 55);
+            this._btnInitSubdomain.TabIndex = 9;
+            this._btnInitSubdomain.Text = "Init Subdomains From Text";
+            this._btnInitSubdomain.UseVisualStyleBackColor = true;
+            this._btnInitSubdomain.Click += new System.EventHandler(this._btnInitSubdomain_Click);
+            // 
+            // _btnFindSubdomains
+            // 
+            this._btnFindSubdomains.Location = new System.Drawing.Point(75, 127);
+            this._btnFindSubdomains.Name = "_btnFindSubdomains";
+            this._btnFindSubdomains.Size = new System.Drawing.Size(112, 31);
+            this._btnFindSubdomains.TabIndex = 10;
+            this._btnFindSubdomains.Text = "Find Subdomains";
+            this._btnFindSubdomains.UseVisualStyleBackColor = true;
+            this._btnFindSubdomains.Click += new System.EventHandler(this._btnFindSubdomains_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(933, 337);
+            this.Controls.Add(this._btnFindSubdomains);
+            this.Controls.Add(this._btnInitSubdomain);
+            this.Controls.Add(this._btnLoadText);
+            this.Controls.Add(this._btnProgramLoad);
+            this.Controls.Add(this._btnAddSubdomain);
             this.Controls.Add(this._btnBackup);
             this.Controls.Add(this._btnInitialize);
             this.Controls.Add(this._btnDumpDomains);
@@ -118,6 +178,11 @@
         private System.Windows.Forms.Button _btnDumpDomains;
         private System.Windows.Forms.Button _btnInitialize;
         private System.Windows.Forms.Button _btnBackup;
+        private System.Windows.Forms.Button _btnAddSubdomain;
+        private System.Windows.Forms.Button _btnProgramLoad;
+        private System.Windows.Forms.Button _btnLoadText;
+        private System.Windows.Forms.Button _btnInitSubdomain;
+        private System.Windows.Forms.Button _btnFindSubdomains;
     }
 }
 

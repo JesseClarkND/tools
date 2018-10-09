@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -86,6 +87,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\components\Clark.Domain.Component\Clark.Domain.Component.csproj">
+      <Project>{0fbca027-5dd6-46e6-8e09-9f467ce35cbb}</Project>
+      <Name>Clark.Domain.Component</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\components\Clark.Domain.Data\Clark.Domain.Data.csproj">
+      <Project>{77ef616a-2def-4048-b188-1187c49c596f}</Project>
+      <Name>Clark.Domain.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Core\Core.MySQL\Core.MySQL.Accessor\Core.MySQL.Accessor.csproj">
       <Project>{b660952f-f570-4b20-bd5f-f3b600dd0f55}</Project>
       <Name>Core.MySQL.Accessor</Name>
@@ -110,12 +119,6 @@
       <Project>{c28f74be-681b-4628-a06e-39c5444872fb}</Project>
       <Name>Clark.WebArchive</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Settings.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

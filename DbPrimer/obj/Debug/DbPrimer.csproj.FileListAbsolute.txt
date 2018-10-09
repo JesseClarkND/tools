@@ -17,3 +17,9 @@ C:\Users\hogarth45\Documents\Programming\tools\DbPrimer\obj\Debug\DbPrimer.Prope
 C:\Users\hogarth45\Documents\Programming\tools\DbPrimer\obj\Debug\DbPrimer.csproj.GenerateResource.Cache
 C:\Users\hogarth45\Documents\Programming\tools\DbPrimer\obj\Debug\DbPrimer.exe
 C:\Users\hogarth45\Documents\Programming\tools\DbPrimer\obj\Debug\DbPrimer.pdb
+C:\Users\hogarth45\Documents\Programming\tools\DbPrimer\obj\Debug\DbPrimer.Forms._frmAddSubDomain.resources
+C:\Users\hogarth45\Documents\Programming\tools\DbPrimer\bin\Debug\Newtonsoft.Json.dll
+C:\Users\hogarth45\Documents\Programming\tools\DbPrimer\bin\Debug\Newtonsoft.Json.xml
+C:\Users\hogarth45\Documents\Programming\tools\DbPrimer\bin\Debug\Clark.Common.dll
+C:\Users\hogarth45\Documents\Programming\tools\DbPrimer\bin\Debug\HtmlAgilityPack.dll
+C:\Users\hogarth45\Documents\Programming\tools\DbPrimer\bin\Debug\Clark.Common.pdb

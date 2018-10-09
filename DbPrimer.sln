@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clark.Domain.Component", ".
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clark.Domain.Data", "..\components\Clark.Domain.Data\Clark.Domain.Data.csproj", "{77EF616A-2DEF-4048-B188-1187C49C596F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clark.Common", "..\utilities\Clark.Common\Clark.Common.csproj", "{890E5D7C-BCDE-48D7-AE97-7503B184735B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{77EF616A-2DEF-4048-B188-1187C49C596F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77EF616A-2DEF-4048-B188-1187C49C596F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77EF616A-2DEF-4048-B188-1187C49C596F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{890E5D7C-BCDE-48D7-AE97-7503B184735B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{890E5D7C-BCDE-48D7-AE97-7503B184735B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{890E5D7C-BCDE-48D7-AE97-7503B184735B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{890E5D7C-BCDE-48D7-AE97-7503B184735B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -41,5 +47,6 @@ Global
 		{B660952F-F570-4B20-BD5F-F3B600DD0F55} = {3496D4F5-0821-4FB8-80A7-AA2841A22943}
 		{0FBCA027-5DD6-46E6-8E09-9F467CE35CBB} = {3496D4F5-0821-4FB8-80A7-AA2841A22943}
 		{77EF616A-2DEF-4048-B188-1187C49C596F} = {3496D4F5-0821-4FB8-80A7-AA2841A22943}
+		{890E5D7C-BCDE-48D7-AE97-7503B184735B} = {3496D4F5-0821-4FB8-80A7-AA2841A22943}
 	EndGlobalSection
 EndGlobal

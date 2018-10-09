@@ -21,6 +21,9 @@ using Clark.WebArchiveCrawler;
 using Clark.WebArchiveCrawler.Model;
 using Core.MySQL.Accessor;
 using MySql.Data.MySqlClient;
+using Clark.Domain.Component;
+using Clark.Domain.Data.Results;
+using Clark.Domain.Data;
 
 namespace AlternateTerritory
 {
@@ -44,6 +47,13 @@ namespace AlternateTerritory
             TextFileLogger.Log(Settings.LogDir, DateTime.Now.ToString("yyyy-MM-dd") + ".txt", log); 
         }
 
+        private void LogLinks(string log)
+        {
+            if (String.IsNullOrEmpty(log))
+                return;
+            TextFileLogger.Log(Settings.InterstingURLs, DateTime.Now.ToString("yyyy-MM-dd") + ".txt", log);
+        }
+
         private void LogTest(string log)
         {
             _rtbLog.Text = log+Environment.NewLine;
@@ -56,8 +66,14 @@ namespace AlternateTerritory
             _btnStart.Enabled = false;
             List<string> domains = File.ReadAllLines(Settings.SourceFile).ToList();
 
+            //DomainController domainController = new DomainController();
+            //SubdomainController subdomainController = new SubdomainController();
+            //DomainFindResult findResult = domainController.FindAll();
+           // foreach (Clark.Domain.Data.Domain domainItem in findResult.Items)
             foreach (string domain in domains)
             {
+                //string domain = domainItem.DomainName;
+
                 Log("========================");
                 Log("Starting " + domain + " at "+DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString());
                 Log("========================");
@@ -76,7 +92,14 @@ namespace AlternateTerritory
                 }
                 else
                 {
-                    subDomains = Hunter.GatherAll(domain, knownSubdomains);
+                    HunterRequest request = new HunterRequest();
+                    request.Domain = domain;
+                    request.KnownSubdomains = knownSubdomains;
+                    request.SecurityTrailsAPIKey = Settings.SecurityTrailsAPI;
+                    request.VirusTotalAPIKey = Settings.VirusTotalAPI;
+
+                    subDomains = Hunter.GatherAll(request);
+
                     Log("Subdomains found: " + subDomains.Count);
                     TextFileLogger.WriteOverwriteFile(Settings.ExistingDir, domain.Replace(".", "") + ".txt", subDomains);
                 }
@@ -90,7 +113,14 @@ namespace AlternateTerritory
 
                     foreach (string chunck in subDomainChunk)
                     {
-                        Thread th = new Thread(() => { TestDomain(chunck, true); });
+                        //Subdomain sub = new Subdomain();
+                        //sub.DateFound = DateTime.Now;
+                        //sub.DomainId = domainItem.DomainId;
+                        //sub.SubdomainName = chunck.ToString().Replace(domain, "").Trim('.');
+
+                        //subdomainController.Insert(sub);
+
+                        Thread th = new Thread(() => { TestDomain(chunck.ToString(), true); });
                         lstThreads.Add(th);
                     }
 
@@ -105,6 +135,7 @@ namespace AlternateTerritory
         private void TestDomain(string address, bool signalEnd)
         {
             StringBuilder sb = new StringBuilder();
+            StringBuilder linkBuilder = new StringBuilder();
             try
             {
                 sb.Append("Checking: " + address + Environment.NewLine);
@@ -121,35 +152,37 @@ namespace AlternateTerritory
                 {
                     if (request.Response.TimeOut == false)
                     {
-                        CheckEngine(request, sb);
-                        CheckBuckets(request, sb);
-                        CheckSocialMedia(request, sb);
-                        CheckServices(request, sb);
-                        CheckDefaultpages(request, sb);
-                        CheckIndexOf(request, sb);
+                        CheckEngine(request, sb, linkBuilder);
+                        CheckBuckets(request, sb, linkBuilder);
+                        CheckSocialMedia(request, sb, linkBuilder);
+                        CheckServices(request, sb, linkBuilder);
+                        CheckDefaultpages(request, sb, linkBuilder);
+                        CheckIndexOf(request, sb, linkBuilder);
                     }
                     else
                     {
-                       // CheckBigIPService(request, sb);
+                        // CheckBigIPService(request, sb);
                     }
                 }
 
-                CheckForFileType(request.Address, sb, "swf");
-                CheckForFileType(request.Address, sb, "php");
-                CheckForFileType(request.Address, sb, "xml");
-                CheckForFileType(request.Address, sb, "conf");
-                CheckPHPInfo(request.Address, sb);
-                CheckKnownAttackFiles(request.Address, sb);
+                //CheckForFileType(request.Address, sb, "swf", linkBuilder);
+                CheckForFileType(request.Address, sb, "php", linkBuilder);
+                CheckForFileType(request.Address, sb, "xml", linkBuilder);
+                CheckForFileType(request.Address, sb, "conf", linkBuilder);
+                CheckForFileType(request.Address, sb, "env", linkBuilder);
+                CheckPHPInfo(request.Address, sb, linkBuilder);
+                CheckKnownAttackFiles(request.Address, sb, linkBuilder);
             }
             catch (Exception ex)
             {
                 string inner = "";
                 if (ex.InnerException != null)
                     inner = ex.InnerException.Message;
-                sb.Append("!!!!!Exception: " + ex.Message + " Inner: "+inner);
+                sb.Append("!!!!!Exception: " + ex.Message + " Inner: "+inner + " Stack: " +ex.StackTrace);
             }
             Log(sb.ToString());
-
+            LogLinks(linkBuilder.ToString());
+            
             if(signalEnd)
                 _countdown.Signal();
         }
@@ -159,29 +192,12 @@ namespace AlternateTerritory
         {
             var fromAddress = new MailAddress("hogarth45scanners@gmail.com", Settings.ServerName);
             var toAddress = new MailAddress("hogarth45@gmail.com", "To Name");
-            string fromPassword = "hogarth45scanners@1";
-
-            var smtp = new SmtpClient
-            {
-                Host = "smtp.gmail.com",
-                Port = 587,
-                EnableSsl = true,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
-            };
-            using (var message = new MailMessage(fromAddress, toAddress)
-            {
-                Subject = subject,
-                Body = body
-            })
-            {
-                smtp.Send(message);
-            }
+     
+            MailGun.Blast(subject, body, fromAddress, toAddress, Settings.EmailPassword);
         }
 
         #region
-        private void CheckEngine(WebPageRequest request, StringBuilder sb)
+        private void CheckEngine(WebPageRequest request, StringBuilder sb, StringBuilder linkBuilder = null)
         {
             string engine = SubdomainTakeover.Check(request.Response.Body);
 
@@ -189,6 +205,8 @@ namespace AlternateTerritory
             {
                 sb.Append("\tEngine Found! " + engine + "! Email sent." + Environment.NewLine);
                 SendEmail("Subdomain takeover", request.Address + " appears to have an open instance of " + engine);
+                if (linkBuilder != null)
+                    linkBuilder.Append(request.Address + Environment.NewLine);
             }
             else
             {
@@ -196,7 +214,7 @@ namespace AlternateTerritory
             }
         }
 
-        private void CheckBigIPService(WebPageRequest request, StringBuilder sb)
+        private void CheckBigIPService(WebPageRequest request, StringBuilder sb, StringBuilder linkBuilder = null)
         {
             //to be checked only if it base directroy / times out
             //https://twitter.com/_ayoubfathi_/status/1039070515690844160
@@ -207,6 +225,8 @@ namespace AlternateTerritory
             {
                 sb.Append("\tBig IP Service Found! " + request.Address+"/my.service" + " Email sent." + Environment.NewLine);
                 SendEmail("Big IP Service Found", request.Address + " appears to have a Big IP service running at " + request.Address+"/my.service");
+                if (linkBuilder != null)
+                    linkBuilder.Append(request.Address + Environment.NewLine);
             }
             else
             {
@@ -215,7 +235,7 @@ namespace AlternateTerritory
 
         }
 
-        private void CheckBuckets(WebPageRequest request, StringBuilder sb)
+        private void CheckBuckets(WebPageRequest request, StringBuilder sb, StringBuilder linkBuilder = null)
         {
             List<string> buckets = S3Bucket.BucketCheck(request.Response.Body);
 
@@ -223,6 +243,8 @@ namespace AlternateTerritory
             {
                 sb.Append("\tUnclaimed S3 Buckets Found! " + String.Join(", ", buckets.ToArray()) + "! Email sent." + Environment.NewLine);
                 SendEmail("Unclaimed  S3 Buckets Used", request.Address + " appears to use buckets " + String.Join(", " + Environment.NewLine, buckets.ToArray()));
+                if (linkBuilder != null)
+                    linkBuilder.Append(request.Address + Environment.NewLine);
             }
             else
             {
@@ -236,7 +258,9 @@ namespace AlternateTerritory
                 if (buckets.Count != 0)
                 {
                     sb.Append("\tS3 Buckets Found! " + String.Join(", ", buckets.ToArray()) + "! Email sent." + Environment.NewLine);
-                    SendEmail("S3 Buckets Used", kvp.Key + " appears to use buckets " + String.Join(", " + Environment.NewLine, buckets.ToArray()));
+                    SendEmail("S3 Buckets Used", kvp.Key + " appears to use buckets " + String.Join(Environment.NewLine, buckets.ToArray()));
+                    if (linkBuilder != null)
+                        linkBuilder.Append(String.Join(Environment.NewLine, buckets.ToArray()) + Environment.NewLine);
                 }
                 else
                 {
@@ -246,14 +270,18 @@ namespace AlternateTerritory
             }
         }
 
-        private void CheckSocialMedia(WebPageRequest request, StringBuilder sb)
+        private void CheckSocialMedia(WebPageRequest request, StringBuilder sb, StringBuilder linkBuilder = null)
         {
             List<string> socialMedia = SocialMedia.Check(request.Response.Body);
 
             if (socialMedia.Count != 0)
             {
                 sb.Append("\tDormant social media accounts found! " + String.Join(", " + Environment.NewLine, socialMedia.ToArray()) + "! Email sent." + Environment.NewLine);
-                SendEmail("Dormant Social Media Used", request.Address + " appears to use dormant social media accounts " + String.Join(", " + Environment.NewLine, socialMedia.ToArray()));
+                SendEmail("Dormant Social Media Used", request.Address + " appears to use dormant social media accounts " + String.Join(Environment.NewLine, socialMedia.ToArray()));
+                if (linkBuilder != null)
+                {
+                    linkBuilder.Append(String.Join(Environment.NewLine, socialMedia.ToArray()) + Environment.NewLine);
+                }
             }
             else
             {
@@ -261,7 +289,7 @@ namespace AlternateTerritory
             }
         }
 
-        private void CheckServices(WebPageRequest request, StringBuilder sb)
+        private void CheckServices(WebPageRequest request, StringBuilder sb, StringBuilder linkBuilder = null)
         {
             string service = Services.Check(request.Response.Body);
 
@@ -269,6 +297,8 @@ namespace AlternateTerritory
             {
                 sb.Append("\tService Exposure Found! " + service + "! Email sent." + Environment.NewLine);
                 SendEmail("Exposed Service", request.Address + " appears to have an exposed service of " + service);
+                if (linkBuilder != null)
+                    linkBuilder.Append(request.Address + Environment.NewLine);
             }
             else
             {
@@ -276,7 +306,7 @@ namespace AlternateTerritory
             }
         }
 
-        private void CheckDefaultpages(WebPageRequest request, StringBuilder sb)
+        private void CheckDefaultpages(WebPageRequest request, StringBuilder sb, StringBuilder linkBuilder = null)
         {
             string defaultPage = DefaultPage.Check(request.Response.Body);
 
@@ -284,6 +314,8 @@ namespace AlternateTerritory
             {
                 sb.Append("\tDefault Page Found! " + defaultPage + "! Email sent." + Environment.NewLine);
                 SendEmail("\tDefault Page", request.Address + " appears to have a default page for " + defaultPage);
+                if (linkBuilder != null)
+                    linkBuilder.Append(request.Address + Environment.NewLine);
             }
             else
             {
@@ -291,7 +323,7 @@ namespace AlternateTerritory
             }
         }
 
-        private void CheckPHPInfo(string url, StringBuilder sb)
+        private void CheckPHPInfo(string url, StringBuilder sb, StringBuilder linkBuilder = null)
         {
             string phpInfo = PHPInfo.Check(url);
 
@@ -299,6 +331,8 @@ namespace AlternateTerritory
             {
                 sb.Append("\tPHP Info Found! " + phpInfo + "! Email sent." + Environment.NewLine);
                 SendEmail("\tPHP Info Found ", phpInfo + " appears to have an exposed phpinfo()");
+                if (linkBuilder != null)
+                    linkBuilder.Append(phpInfo + Environment.NewLine);
             }
             else
             {
@@ -306,7 +340,7 @@ namespace AlternateTerritory
             }
         }
 
-        private void CheckForFileType(string url, StringBuilder sb, string fileExtension)
+        private void CheckForFileType(string url, StringBuilder sb, string fileExtension, StringBuilder linkBuilder = null)
         {
             try
             {
@@ -319,21 +353,25 @@ namespace AlternateTerritory
 
                 if (info.Count != 0)
                 {
-                    sb.Append("\tSWF Files Found! " + info + "! Email sent." + Environment.NewLine);
-                    SendEmail("\tSWF Files Found ", url + " appears to have swf files: " + Environment.NewLine + String.Join(Environment.NewLine, info.ToArray()));
+                    sb.Append("\t"+fileExtension+" Files Found! " + info + "! Email sent." + Environment.NewLine);
+                    SendEmail("\t" + fileExtension + " Files Found ", url + " appears to have " + fileExtension + " files: " + Environment.NewLine + String.Join(Environment.NewLine, info.ToArray()));
+                    if (linkBuilder != null)
+                    {
+                        linkBuilder.Append(String.Join(Environment.NewLine, info.ToArray()) + Environment.NewLine);
+                    }
                 }
                 else
                 {
-                    sb.Append("\tNo SWF files found." + Environment.NewLine);
+                    sb.Append("\tNo " + fileExtension + " files found." + Environment.NewLine);
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception("SWF exception: " + ex.Message);
+                throw new Exception("File finder exception: " + ex.Message);
             }
         }
 
-        private void CheckIndexOf(WebPageRequest request, StringBuilder sb)
+        private void CheckIndexOf(WebPageRequest request, StringBuilder sb, StringBuilder linkBuilder = null)
         {
             bool indexOf = IndexOf.Check(request.Response.Body);
 
@@ -341,6 +379,10 @@ namespace AlternateTerritory
             {
                 sb.Append("\tDirectory Traversal Found! " + request.Address + "! Email sent." + Environment.NewLine);
                 SendEmail("\tDirectory Traversal Found", request.Address + " appears to have directory traversal enabled.");
+                if (linkBuilder != null)
+                {
+                    linkBuilder.Append(request.Address + Environment.NewLine);
+                }
             }
             else
             {
@@ -348,7 +390,7 @@ namespace AlternateTerritory
             }
         }
 
-        private void CheckKnownAttackFiles(string url, StringBuilder sb)
+        private void CheckKnownAttackFiles(string url, StringBuilder sb, StringBuilder linkBuilder = null)
         {
             List<string> attackFiles = KnownAttackFiles.Check(url);
 
@@ -356,6 +398,10 @@ namespace AlternateTerritory
             {
                 sb.Append("\tKnown Attack Files Found! " + url + "! Email sent." + Environment.NewLine + Environment.NewLine + (String.Join(Environment.NewLine, attackFiles.ToArray())));
                 SendEmail("\tKnown Attack Files Found ", url + " appears to have known attack files: "+Environment.NewLine +(String.Join(Environment.NewLine, attackFiles.ToArray())));
+                if (linkBuilder != null)
+                {
+                    linkBuilder.Append(String.Join(Environment.NewLine, attackFiles.ToArray()) + Environment.NewLine);
+                }
             }
             else
             {
@@ -778,7 +824,7 @@ namespace AlternateTerritory
 
             StringBuilder sb = new StringBuilder();
             sb.Append("Testing Security Trails API...");
-            List<string> subDomains = Hunter.Gather_SecurityTrails(domain);
+            List<string> subDomains = Hunter.Gather_SecurityTrails(domain, Settings.SecurityTrailsAPI);
             sb.Append("Subdomains found: " + subDomains.Count);
             foreach (string sub in subDomains.Take(5))
             {
@@ -825,6 +871,7 @@ namespace AlternateTerritory
                         sb.Append("Access denied (Check DB name,username,password)" + Environment.NewLine);
                         break;
                     default:
+                        sb.Append(ex.Message);
                         break;
                 }
             }
@@ -845,5 +892,10 @@ namespace AlternateTerritory
         }
 
         #endregion
+
+        private void _btnTestEmail_Click(object sender, EventArgs e)
+        {
+            SendEmail("test email", "test body");
+        }
     }
 }

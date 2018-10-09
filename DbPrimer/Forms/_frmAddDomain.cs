@@ -21,7 +21,6 @@ namespace DbPrimer.Forms
 
         private void _frmAddDomain_Load(object sender, EventArgs e)
         {
-            this.CancelButton = _btnCancel;
         }
 
         private void _btnSave_Click(object sender, EventArgs e)
@@ -61,6 +60,11 @@ namespace DbPrimer.Forms
             }
 
             _btnSave.Enabled = true;
+        }
+
+        private void _btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

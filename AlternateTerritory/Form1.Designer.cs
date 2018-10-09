@@ -44,6 +44,7 @@
             this._btnNetcraftTest = new System.Windows.Forms.Button();
             this._btnSecTrailsTest = new System.Windows.Forms.Button();
             this._btnDatabaseConnectivityTest = new System.Windows.Forms.Button();
+            this._btnTestEmail = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // _btnStart
@@ -201,11 +202,22 @@
             this._btnDatabaseConnectivityTest.UseVisualStyleBackColor = true;
             this._btnDatabaseConnectivityTest.Click += new System.EventHandler(this._btnDatabaseConnectivityTest_Click);
             // 
+            // _btnTestEmail
+            // 
+            this._btnTestEmail.Location = new System.Drawing.Point(106, 396);
+            this._btnTestEmail.Name = "_btnTestEmail";
+            this._btnTestEmail.Size = new System.Drawing.Size(88, 47);
+            this._btnTestEmail.TabIndex = 16;
+            this._btnTestEmail.Text = "Test Email";
+            this._btnTestEmail.UseVisualStyleBackColor = true;
+            this._btnTestEmail.Click += new System.EventHandler(this._btnTestEmail_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1028, 455);
+            this.Controls.Add(this._btnTestEmail);
             this.Controls.Add(this._btnDatabaseConnectivityTest);
             this.Controls.Add(this._btnSecTrailsTest);
             this.Controls.Add(this._btnNetcraftTest);
@@ -248,6 +260,7 @@
         private System.Windows.Forms.Button _btnNetcraftTest;
         private System.Windows.Forms.Button _btnSecTrailsTest;
         private System.Windows.Forms.Button _btnDatabaseConnectivityTest;
+        private System.Windows.Forms.Button _btnTestEmail;
     }
 }
 

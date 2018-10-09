@@ -32,11 +32,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>..\..\dlls\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="mysql.data">
       <HintPath>..\..\dlls\mysql.data.dll</HintPath>
     </Reference>
     <Reference Include="mysql.data.entity">
       <HintPath>..\..\dlls\mysql.data.entity.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\dlls\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -62,13 +68,23 @@
     <Compile Include="Forms\_frmAddDomain.Designer.cs">
       <DependentUpon>_frmAddDomain.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\_frmAddSubDomain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\_frmAddSubDomain.Designer.cs">
+      <DependentUpon>_frmAddSubDomain.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\JsonLoader.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\_frmAddDomain.resx">
       <DependentUpon>_frmAddDomain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\_frmAddSubDomain.resx">
+      <DependentUpon>_frmAddSubDomain.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -104,6 +120,10 @@
     <ProjectReference Include="..\..\Core\Core.MySQL\Core.MySQL.Accessor\Core.MySQL.Accessor.csproj">
       <Project>{b660952f-f570-4b20-bd5f-f3b600dd0f55}</Project>
       <Name>Core.MySQL.Accessor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\utilities\Clark.Common\Clark.Common.csproj">
+      <Project>{890e5d7c-bcde-48d7-ae97-7503b184735b}</Project>
+      <Name>Clark.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
