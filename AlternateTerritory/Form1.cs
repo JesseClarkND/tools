@@ -24,6 +24,8 @@ using MySql.Data.MySqlClient;
 using Clark.Domain.Component;
 using Clark.Domain.Data.Results;
 using Clark.Domain.Data;
+using Clark.ContentScanner.Models;
+using AlternateTerritory.Models;
 
 namespace AlternateTerritory
 {
@@ -144,6 +146,15 @@ namespace AlternateTerritory
 
                 WebPageLoader.Load(request);
 
+                ScannerRequest sRequest = new ScannerRequest();
+                sRequest.Body = request.Response.Body;
+                sRequest.URL = address;
+                sRequest.Domain = DomainUtility.GetDomainFromUrl(address);
+
+                ScannerResult result = new ScannerResult();
+                ScannerContext scannerContext = new ScannerContext();
+
+
                 if (request.Response.Body.Equals(String.Empty) && request.Response.TimeOut == false)
                 {
                     sb.Append("\tNo body found." + Environment.NewLine);
@@ -152,12 +163,33 @@ namespace AlternateTerritory
                 {
                     if (request.Response.TimeOut == false)
                     {
-                        CheckEngine(request, sb, linkBuilder);
-                        CheckBuckets(request, sb, linkBuilder);
-                        CheckSocialMedia(request, sb, linkBuilder);
-                        CheckServices(request, sb, linkBuilder);
-                        CheckDefaultpages(request, sb, linkBuilder);
-                        CheckIndexOf(request, sb, linkBuilder);
+                        result = CheckEngine(sRequest, sb, linkBuilder);
+                        if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                        result = CheckBuckets(sRequest, sb, linkBuilder);
+                        if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                        result = CheckSocialMedia(sRequest, sb, linkBuilder);
+                        if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                        result = CheckServices(sRequest, sb, linkBuilder);
+                        if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                        result = CheckDefaultpages(sRequest, sb, linkBuilder);
+                        if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                        result = CheckIndexOf(sRequest, sb, linkBuilder);
+                        if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                        foreach (var script in request.Response.Scripts)
+                        {
+                            ScannerRequest scriptRequest = new ScannerRequest();
+                            scriptRequest.Body = script.Value;
+                            scriptRequest.URL = script.Key;
+
+                            result = CheckBuckets(scriptRequest, sb, linkBuilder);
+                            if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+                        }
                     }
                     else
                     {
@@ -166,12 +198,26 @@ namespace AlternateTerritory
                 }
 
                 //CheckForFileType(request.Address, sb, "swf", linkBuilder);
-                CheckForFileType(request.Address, sb, "php", linkBuilder);
-                CheckForFileType(request.Address, sb, "xml", linkBuilder);
-                CheckForFileType(request.Address, sb, "conf", linkBuilder);
-                CheckForFileType(request.Address, sb, "env", linkBuilder);
-                CheckPHPInfo(request.Address, sb, linkBuilder);
-                CheckKnownAttackFiles(request.Address, sb, linkBuilder);
+                result = CheckForFileType(request.Address, sb, "php", linkBuilder);
+                if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                result = CheckForFileType(request.Address, sb, "xml", linkBuilder);
+                if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                result = CheckForFileType(request.Address, sb, "conf", linkBuilder);
+                if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                result = CheckForFileType(request.Address, sb, "env", linkBuilder);
+                if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                result = CheckPHPInfo(sRequest, sb, linkBuilder);
+                if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                result = CheckKnownAttackFiles(sRequest, sb, linkBuilder);
+                if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                result = CheckCRLF(sRequest, sb, linkBuilder);
+                if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
             }
             catch (Exception ex)
             {
@@ -197,21 +243,23 @@ namespace AlternateTerritory
         }
 
         #region
-        private void CheckEngine(WebPageRequest request, StringBuilder sb, StringBuilder linkBuilder = null)
+        private ScannerResult CheckEngine(ScannerRequest request, StringBuilder sb, StringBuilder linkBuilder = null)
         {
-            string engine = SubdomainTakeover.Check(request.Response.Body);
+            ScannerResult result = SubdomainTakeover.Check(request);
 
-            if (!String.IsNullOrEmpty(engine))
+            if (result.Success)
             {
-                sb.Append("\tEngine Found! " + engine + "! Email sent." + Environment.NewLine);
-                SendEmail("Subdomain takeover", request.Address + " appears to have an open instance of " + engine);
+                sb.Append("\tEngine Found! " + result.Results.First() + "! Email sent." + Environment.NewLine);
+                SendEmail("Subdomain takeover", request.URL + " appears to have an open instance of " + result.Results.First());
                 if (linkBuilder != null)
-                    linkBuilder.Append(request.Address + Environment.NewLine);
+                    linkBuilder.Append(request.URL + Environment.NewLine);
             }
             else
             {
                 sb.Append("\tNo engine found." + Environment.NewLine);
             }
+
+            return result;
         }
 
         private void CheckBigIPService(WebPageRequest request, StringBuilder sb, StringBuilder linkBuilder = null)
@@ -235,113 +283,107 @@ namespace AlternateTerritory
 
         }
 
-        private void CheckBuckets(WebPageRequest request, StringBuilder sb, StringBuilder linkBuilder = null)
+        private ScannerResult CheckBuckets(ScannerRequest request, StringBuilder sb, StringBuilder linkBuilder = null)
         {
-            List<string> buckets = S3Bucket.BucketCheck(request.Response.Body);
+            ScannerResult result = S3Bucket.BucketCheck(request);
 
-            if (buckets.Count != 0)
+            if (result.Success)
             {
-                sb.Append("\tUnclaimed S3 Buckets Found! " + String.Join(", ", buckets.ToArray()) + "! Email sent." + Environment.NewLine);
-                SendEmail("Unclaimed  S3 Buckets Used", request.Address + " appears to use buckets " + String.Join(", " + Environment.NewLine, buckets.ToArray()));
+                sb.Append("\tUnclaimed S3 Buckets Found! " + String.Join(", ", result.Results.ToArray()) + "! Email sent." + Environment.NewLine);
+                SendEmail("Unclaimed  S3 Buckets Used", request.URL + " appears to use buckets " + String.Join(", " + Environment.NewLine, result.Results.ToArray()));
                 if (linkBuilder != null)
-                    linkBuilder.Append(request.Address + Environment.NewLine);
+                    linkBuilder.Append(request.URL + Environment.NewLine);
             }
             else
             {
                 sb.Append("\tNo Unclaimed S3 buckets found." + Environment.NewLine);
             }
 
-            foreach (KeyValuePair<string, string> kvp in request.Response.Scripts)
-            {
-                buckets = S3Bucket.BucketCheck(kvp.Value);
-
-                if (buckets.Count != 0)
-                {
-                    sb.Append("\tS3 Buckets Found! " + String.Join(", ", buckets.ToArray()) + "! Email sent." + Environment.NewLine);
-                    SendEmail("S3 Buckets Used", kvp.Key + " appears to use buckets " + String.Join(Environment.NewLine, buckets.ToArray()));
-                    if (linkBuilder != null)
-                        linkBuilder.Append(String.Join(Environment.NewLine, buckets.ToArray()) + Environment.NewLine);
-                }
-                else
-                {
-                    sb.Append("\tNo S3 buckets found." + Environment.NewLine);
-                }
-
-            }
+            return result;
         }
 
-        private void CheckSocialMedia(WebPageRequest request, StringBuilder sb, StringBuilder linkBuilder = null)
+        private ScannerResult CheckSocialMedia(ScannerRequest request, StringBuilder sb, StringBuilder linkBuilder = null)
         {
-            List<string> socialMedia = SocialMedia.Check(request.Response.Body);
+            ScannerResult result = SocialMedia.Check(request);
 
-            if (socialMedia.Count != 0)
+            if (result.Success)
             {
-                sb.Append("\tDormant social media accounts found! " + String.Join(", " + Environment.NewLine, socialMedia.ToArray()) + "! Email sent." + Environment.NewLine);
-                SendEmail("Dormant Social Media Used", request.Address + " appears to use dormant social media accounts " + String.Join(Environment.NewLine, socialMedia.ToArray()));
+                sb.Append("\tDormant social media accounts found! " + String.Join(", " + Environment.NewLine, result.Results.ToArray()) + "! Email sent." + Environment.NewLine);
+                SendEmail("Dormant Social Media Used", request.URL + " appears to use dormant social media accounts " + String.Join(Environment.NewLine, result.Results.ToArray()));
                 if (linkBuilder != null)
                 {
-                    linkBuilder.Append(String.Join(Environment.NewLine, socialMedia.ToArray()) + Environment.NewLine);
+                    linkBuilder.Append(String.Join(Environment.NewLine, result.Results.ToArray()) + Environment.NewLine);
                 }
             }
             else
             {
                 sb.Append("\tNo dormant social media accounts found." + Environment.NewLine);
             }
+
+            return result;
         }
 
-        private void CheckServices(WebPageRequest request, StringBuilder sb, StringBuilder linkBuilder = null)
+        private ScannerResult CheckServices(ScannerRequest request, StringBuilder sb, StringBuilder linkBuilder = null)
         {
-            string service = Services.Check(request.Response.Body);
+            ScannerResult result = Services.Check(request);
 
-            if (!String.IsNullOrEmpty(service))
+            if (result.Success)
             {
-                sb.Append("\tService Exposure Found! " + service + "! Email sent." + Environment.NewLine);
-                SendEmail("Exposed Service", request.Address + " appears to have an exposed service of " + service);
+                sb.Append("\tService Exposure Found! " + result.Results.First() + "! Email sent." + Environment.NewLine);
+                SendEmail("Exposed Service", request.URL + " appears to have an exposed service of " + result.Results.First());
                 if (linkBuilder != null)
-                    linkBuilder.Append(request.Address + Environment.NewLine);
+                    linkBuilder.Append(request.URL + Environment.NewLine);
             }
             else
             {
                 sb.Append("\tNo exposed services found." + Environment.NewLine);
             }
+
+            return result;
         }
 
-        private void CheckDefaultpages(WebPageRequest request, StringBuilder sb, StringBuilder linkBuilder = null)
+        private ScannerResult CheckDefaultpages(ScannerRequest request, StringBuilder sb, StringBuilder linkBuilder = null)
         {
-            string defaultPage = DefaultPage.Check(request.Response.Body);
 
-            if (!String.IsNullOrEmpty(defaultPage))
+            ScannerResult result = DefaultPage.Check(request);
+
+            if (result.Success)
             {
-                sb.Append("\tDefault Page Found! " + defaultPage + "! Email sent." + Environment.NewLine);
-                SendEmail("\tDefault Page", request.Address + " appears to have a default page for " + defaultPage);
+                sb.Append("\tDefault Page Found! " + result.Results.First() + "! Email sent." + Environment.NewLine);
+                SendEmail("\tDefault Page", request.URL + " appears to have a default page for " + result.Results.First());
                 if (linkBuilder != null)
-                    linkBuilder.Append(request.Address + Environment.NewLine);
+                    linkBuilder.Append(request.URL + Environment.NewLine);
             }
             else
             {
                 sb.Append("\tNo default pages found."+Environment.NewLine);
             }
+
+            return result;
         }
 
-        private void CheckPHPInfo(string url, StringBuilder sb, StringBuilder linkBuilder = null)
+        private ScannerResult CheckPHPInfo(ScannerRequest request, StringBuilder sb, StringBuilder linkBuilder = null)
         {
-            string phpInfo = PHPInfo.Check(url);
+            ScannerResult result = PHPInfo.Check(request);
 
-            if (!String.IsNullOrEmpty(phpInfo))
+            if (result.Success)
             {
-                sb.Append("\tPHP Info Found! " + phpInfo + "! Email sent." + Environment.NewLine);
-                SendEmail("\tPHP Info Found ", phpInfo + " appears to have an exposed phpinfo()");
+                sb.Append("\tPHP Info Found! " + result.Results.First() + "! Email sent." + Environment.NewLine);
+                SendEmail("\tPHP Info Found ", result.Results.First() + " appears to have an exposed phpinfo()");
                 if (linkBuilder != null)
-                    linkBuilder.Append(phpInfo + Environment.NewLine);
+                    linkBuilder.Append(result.Results.First() + Environment.NewLine);
             }
             else
             {
                 sb.Append("\tNo phpinfo pages found." + Environment.NewLine);
             }
+
+            return result;
         }
 
-        private void CheckForFileType(string url, StringBuilder sb, string fileExtension, StringBuilder linkBuilder = null)
+        private ScannerResult CheckForFileType(string url, StringBuilder sb, string fileExtension, StringBuilder linkBuilder = null)
         {
+            ScannerResult result = new ScannerResult();
             try
             {
                 CrawlRequest request = new CrawlRequest();
@@ -353,8 +395,10 @@ namespace AlternateTerritory
 
                 if (info.Count != 0)
                 {
+                    result.Success = true;
                     sb.Append("\t"+fileExtension+" Files Found! " + info + "! Email sent." + Environment.NewLine);
                     SendEmail("\t" + fileExtension + " Files Found ", url + " appears to have " + fileExtension + " files: " + Environment.NewLine + String.Join(Environment.NewLine, info.ToArray()));
+                    result.Results.AddRange(info);
                     if (linkBuilder != null)
                     {
                         linkBuilder.Append(String.Join(Environment.NewLine, info.ToArray()) + Environment.NewLine);
@@ -369,46 +413,72 @@ namespace AlternateTerritory
             {
                 throw new Exception("File finder exception: " + ex.Message);
             }
+
+            return result;
         }
 
-        private void CheckIndexOf(WebPageRequest request, StringBuilder sb, StringBuilder linkBuilder = null)
+        private ScannerResult CheckIndexOf(ScannerRequest request, StringBuilder sb, StringBuilder linkBuilder = null)
         {
-            bool indexOf = IndexOf.Check(request.Response.Body);
+            ScannerResult result = IndexOf.Check(request);
 
-            if (indexOf)
+            if (result.Success)
             {
-                sb.Append("\tDirectory Traversal Found! " + request.Address + "! Email sent." + Environment.NewLine);
-                SendEmail("\tDirectory Traversal Found", request.Address + " appears to have directory traversal enabled.");
+                sb.Append("\tDirectory Traversal Found! " + request.URL + "! Email sent." + Environment.NewLine);
+                SendEmail("\tDirectory Traversal Found", request.URL + " appears to have directory traversal enabled.");
                 if (linkBuilder != null)
                 {
-                    linkBuilder.Append(request.Address + Environment.NewLine);
+                    linkBuilder.Append(request.URL + Environment.NewLine);
                 }
             }
             else
             {
                 sb.Append("\tNo directory traversal found." + Environment.NewLine);
             }
+
+            return result;
         }
 
-        private void CheckKnownAttackFiles(string url, StringBuilder sb, StringBuilder linkBuilder = null)
+        private ScannerResult CheckKnownAttackFiles(ScannerRequest request, StringBuilder sb, StringBuilder linkBuilder = null)
         {
-            List<string> attackFiles = KnownAttackFiles.Check(url);
+            ScannerResult result = KnownAttackFiles.Check(request);
 
-            if (attackFiles.Count!=0)
+            if (result.Success)
             {
-                sb.Append("\tKnown Attack Files Found! " + url + "! Email sent." + Environment.NewLine + Environment.NewLine + (String.Join(Environment.NewLine, attackFiles.ToArray())));
-                SendEmail("\tKnown Attack Files Found ", url + " appears to have known attack files: "+Environment.NewLine +(String.Join(Environment.NewLine, attackFiles.ToArray())));
+                sb.Append("\tKnown Attack Files Found! " + request.URL + "! Email sent." + Environment.NewLine + Environment.NewLine + (String.Join(Environment.NewLine, result.Results.ToArray())));
+                SendEmail("\tKnown Attack Files Found ", request.URL + " appears to have known attack files: " + Environment.NewLine + (String.Join(Environment.NewLine, result.Results.ToArray())));
                 if (linkBuilder != null)
                 {
-                    linkBuilder.Append(String.Join(Environment.NewLine, attackFiles.ToArray()) + Environment.NewLine);
+                    linkBuilder.Append(String.Join(Environment.NewLine, result.Results.ToArray()) + Environment.NewLine);
                 }
             }
             else
             {
                 sb.Append("\tNo known attack files found." + Environment.NewLine);
             }
+
+            return result;
         }
 
+        private ScannerResult CheckCRLF(ScannerRequest request, StringBuilder sb, StringBuilder linkBuilder = null)
+        {
+            ScannerResult result = CRLF.Check(request);
+
+            if (result.Success)
+            {
+                sb.Append("\tCRLF Attack Found! " + request.URL + "! Email sent." + result.Results.First());
+                SendEmail("\tCRLF Attack Found ", request.URL + " appears to have known attack files: " + Environment.NewLine + result.Results.First());
+                if (linkBuilder != null)
+                {
+                    linkBuilder.Append(String.Join(Environment.NewLine, result.Results.ToArray()) + Environment.NewLine);
+                }
+            }
+            else
+            {
+                sb.Append("\tNo CRLF found." + Environment.NewLine);
+            }
+
+            return result;
+        }
         #endregion
 
         #region Testing Buttons
@@ -431,22 +501,22 @@ namespace AlternateTerritory
                 }
                 else
                 {
+                    ScannerRequest sRequest = new ScannerRequest();
+                    sRequest.Body = request.Response.Body;
+                    sRequest.URL = address;
+                    sRequest.Domain = DomainUtility.GetDomainFromUrl(address);
+
                     sb.Append("\tBody found." + Environment.NewLine);
                     if (request.Response.TimeOut == false)
                     {
-                    //    CheckEngine(request, sb);
-                        CheckBuckets(request, sb);
-                    //    CheckSocialMedia(request, sb);
-                    //    CheckServices(request, sb);
-                    //    CheckDefaultpages(request, sb);
+                        CheckBuckets(sRequest, sb);
+       
                     }
                     else
                     {
                         sb.Append("\tTimed out"+Environment.NewLine);
-                    //    CheckBigIPService(request, sb);
                     }
 
-                    //CheckPHPInfo(request.Address, sb);
                 }
             }
             catch (Exception ex)
@@ -480,19 +550,20 @@ namespace AlternateTerritory
                     sb.Append("\tBody found." + Environment.NewLine);
                     if (request.Response.TimeOut == false)
                     {
-                        //    CheckEngine(request, sb);
-                        // CheckBuckets(request, sb);
-                        CheckSocialMedia(request, sb);
-                        //    CheckServices(request, sb);
-                        //    CheckDefaultpages(request, sb);
+                        ScannerRequest sRequest = new ScannerRequest();
+                        sRequest.Body = request.Response.Body;
+                        sRequest.URL = address;
+                        sRequest.Domain = DomainUtility.GetDomainFromUrl(address);
+              
+                        CheckSocialMedia(sRequest, sb);
+    
                     }
                     else
                     {
                         sb.Append("\tTimed out" + Environment.NewLine);
-                        //    CheckBigIPService(request, sb);
+      
                     }
 
-                    //CheckPHPInfo(request.Address, sb);
                 }
             }
             catch (Exception ex)
@@ -523,14 +594,16 @@ namespace AlternateTerritory
                 }
                 else
                 {
+                    ScannerRequest sRequest = new ScannerRequest();
+                    sRequest.Body = request.Response.Body;
+                    sRequest.URL = address;
+                    sRequest.Domain = DomainUtility.GetDomainFromUrl(address);
+
                     sb.Append("\tBody found." + Environment.NewLine);
                     if (request.Response.TimeOut == false)
                     {
-                        CheckEngine(request, sb);
-                        //CheckBuckets(request, sb);
-                        //CheckSocialMedia(request, sb);
-                        //    CheckServices(request, sb);
-                        //    CheckDefaultpages(request, sb);
+                        CheckEngine(sRequest, sb);
+
                     }
                     else
                     {
@@ -538,7 +611,7 @@ namespace AlternateTerritory
                         //    CheckBigIPService(request, sb);
                     }
 
-                    //CheckPHPInfo(request.Address, sb);
+   
                 }
             }
             catch (Exception ex)
@@ -567,25 +640,13 @@ namespace AlternateTerritory
                 {
                     sb.Append("\tNo body found." + Environment.NewLine);
                 }
-                else
-                {
-                    sb.Append("\tBody found." + Environment.NewLine);
-                    if (request.Response.TimeOut == false)
-                    {
-                        //CheckEngine(request, sb);
-                        //CheckBuckets(request, sb);
-                        //CheckSocialMedia(request, sb);
-                        //    CheckServices(request, sb);
-                        //    CheckDefaultpages(request, sb);
-                    }
-                    else
-                    {
-                        sb.Append("\tTimed out" + Environment.NewLine);
-                        //    CheckBigIPService(request, sb);
-                    }
-                }
 
-                CheckPHPInfo(request.Address, sb);
+                ScannerRequest sRequest = new ScannerRequest();
+                sRequest.Body = request.Response.Body;
+                sRequest.URL = address;
+                sRequest.Domain = DomainUtility.GetDomainFromUrl(address);
+
+                CheckPHPInfo(sRequest, sb);
 
             }
             catch (Exception ex)
@@ -616,22 +677,21 @@ namespace AlternateTerritory
                 }
                 else
                 {
+                    ScannerRequest sRequest = new ScannerRequest();
+                    sRequest.Body = request.Response.Body;
+                    sRequest.URL = address;
+                    sRequest.Domain = DomainUtility.GetDomainFromUrl(address);
+
                     sb.Append("\tBody found." + Environment.NewLine);
                     if (request.Response.TimeOut == false)
                     {
-                        //CheckEngine(request, sb);
-                        //CheckBuckets(request, sb);
-                        //CheckSocialMedia(request, sb);
-                        //    CheckServices(request, sb);
-                        CheckDefaultpages(request, sb);
+                        CheckDefaultpages(sRequest, sb);
                     }
                     else
                     {
                         sb.Append("\tTimed out" + Environment.NewLine);
-                        //    CheckBigIPService(request, sb);
                     }
 
-                    //CheckPHPInfo(request.Address, sb);
                 }
             }
             catch (Exception ex)
@@ -662,22 +722,22 @@ namespace AlternateTerritory
                 }
                 else
                 {
+                    ScannerRequest sRequest = new ScannerRequest();
+                    sRequest.Body = request.Response.Body;
+                    sRequest.URL = address;
+                    sRequest.Domain = DomainUtility.GetDomainFromUrl(address);
+
                     sb.Append("\tBody found." + Environment.NewLine);
                     if (request.Response.TimeOut == false)
                     {
-                        //CheckEngine(request, sb);
-                        //CheckBuckets(request, sb);
-                        //CheckSocialMedia(request, sb);
-                        CheckServices(request, sb);
-                        //CheckDefaultpages(request, sb);
+                        CheckServices(sRequest, sb);
+
                     }
                     else
                     {
                         sb.Append("\tTimed out" + Environment.NewLine);
-                        //    CheckBigIPService(request, sb);
                     }
 
-                    //CheckPHPInfo(request.Address, sb);
                 }
             }
             catch (Exception ex)
@@ -734,8 +794,53 @@ namespace AlternateTerritory
                 {
                     sb.Append("\tBody found." + Environment.NewLine);
 
-                    CheckIndexOf(request, sb);
+                    ScannerRequest sRequest = new ScannerRequest();
+                    sRequest.Body = request.Response.Body;
+                    sRequest.URL = address;
+
+                    sRequest.Domain = DomainUtility.GetDomainFromUrl(address);
+                    CheckIndexOf(sRequest, sb);
                 }
+            }
+            catch (Exception ex)
+            {
+                string inner = "";
+                if (ex.InnerException != null)
+                    inner = ex.InnerException.Message;
+                sb.Append("!!!!!Exception: " + ex.Message + " Inner: " + inner);
+            }
+            LogTest(sb.ToString());
+        }
+
+        private void _btnCRLFTest_Click(object sender, EventArgs e)
+        {
+            string address = _txtDomain.Text;
+            StringBuilder sb = new StringBuilder();
+            try
+            {
+                sb.Append("Starting CRLF Attacks: " + address + Environment.NewLine);
+                WebPageRequest request = new WebPageRequest();
+                request.Address = address;
+
+                WebPageLoader.Load(request);
+
+                if (request.Response.Body.Equals(String.Empty) && request.Response.TimeOut == false)
+                {
+                    sb.Append("\tNo body found." + Environment.NewLine);
+                }
+                else
+                {
+                    sb.Append("\tBody found." + Environment.NewLine);
+
+                }
+
+                ScannerRequest sRequest = new ScannerRequest();
+                sRequest.Body = request.Response.Body;
+                sRequest.URL = address;
+                sRequest.Domain = DomainUtility.GetDomainFromUrl(address);
+
+                CheckCRLF(sRequest, sb);
+
             }
             catch (Exception ex)
             {
@@ -769,7 +874,12 @@ namespace AlternateTerritory
 
                 }
 
-                CheckKnownAttackFiles(request.Address, sb);
+                ScannerRequest sRequest = new ScannerRequest();
+                sRequest.Body = request.Response.Body;
+                sRequest.URL = address;
+                sRequest.Domain = DomainUtility.GetDomainFromUrl(address);
+
+                CheckKnownAttackFiles(sRequest, sb);
 
             }
             catch (Exception ex)

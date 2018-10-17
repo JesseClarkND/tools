@@ -45,6 +45,7 @@
             this._btnSecTrailsTest = new System.Windows.Forms.Button();
             this._btnDatabaseConnectivityTest = new System.Windows.Forms.Button();
             this._btnTestEmail = new System.Windows.Forms.Button();
+            this._btnCRLFTest = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // _btnStart
@@ -212,11 +213,22 @@
             this._btnTestEmail.UseVisualStyleBackColor = true;
             this._btnTestEmail.Click += new System.EventHandler(this._btnTestEmail_Click);
             // 
+            // _btnCRLFTest
+            // 
+            this._btnCRLFTest.Location = new System.Drawing.Point(24, 259);
+            this._btnCRLFTest.Name = "_btnCRLFTest";
+            this._btnCRLFTest.Size = new System.Drawing.Size(88, 47);
+            this._btnCRLFTest.TabIndex = 17;
+            this._btnCRLFTest.Text = "CRLF Test";
+            this._btnCRLFTest.UseVisualStyleBackColor = true;
+            this._btnCRLFTest.Click += new System.EventHandler(this._btnCRLFTest_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1028, 455);
+            this.Controls.Add(this._btnCRLFTest);
             this.Controls.Add(this._btnTestEmail);
             this.Controls.Add(this._btnDatabaseConnectivityTest);
             this.Controls.Add(this._btnSecTrailsTest);
@@ -261,6 +273,7 @@
         private System.Windows.Forms.Button _btnSecTrailsTest;
         private System.Windows.Forms.Button _btnDatabaseConnectivityTest;
         private System.Windows.Forms.Button _btnTestEmail;
+        private System.Windows.Forms.Button _btnCRLFTest;
     }
 }
 
