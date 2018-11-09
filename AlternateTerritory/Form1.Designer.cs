@@ -46,6 +46,8 @@
             this._btnDatabaseConnectivityTest = new System.Windows.Forms.Button();
             this._btnTestEmail = new System.Windows.Forms.Button();
             this._btnCRLFTest = new System.Windows.Forms.Button();
+            this._chkCrawlSites = new System.Windows.Forms.CheckBox();
+            this._buttonCSPTest = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // _btnStart
@@ -223,11 +225,33 @@
             this._btnCRLFTest.UseVisualStyleBackColor = true;
             this._btnCRLFTest.Click += new System.EventHandler(this._btnCRLFTest_Click);
             // 
+            // _chkCrawlSites
+            // 
+            this._chkCrawlSites.AutoSize = true;
+            this._chkCrawlSites.Location = new System.Drawing.Point(936, 363);
+            this._chkCrawlSites.Name = "_chkCrawlSites";
+            this._chkCrawlSites.Size = new System.Drawing.Size(78, 17);
+            this._chkCrawlSites.TabIndex = 18;
+            this._chkCrawlSites.Text = "Crawl Sites";
+            this._chkCrawlSites.UseVisualStyleBackColor = true;
+            // 
+            // _buttonCSPTest
+            // 
+            this._buttonCSPTest.Location = new System.Drawing.Point(22, 312);
+            this._buttonCSPTest.Name = "_buttonCSPTest";
+            this._buttonCSPTest.Size = new System.Drawing.Size(88, 47);
+            this._buttonCSPTest.TabIndex = 19;
+            this._buttonCSPTest.Text = "CSP Test";
+            this._buttonCSPTest.UseVisualStyleBackColor = true;
+            this._buttonCSPTest.Click += new System.EventHandler(this._buttonCSPTest_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1028, 455);
+            this.Controls.Add(this._buttonCSPTest);
+            this.Controls.Add(this._chkCrawlSites);
             this.Controls.Add(this._btnCRLFTest);
             this.Controls.Add(this._btnTestEmail);
             this.Controls.Add(this._btnDatabaseConnectivityTest);
@@ -274,6 +298,8 @@
         private System.Windows.Forms.Button _btnDatabaseConnectivityTest;
         private System.Windows.Forms.Button _btnTestEmail;
         private System.Windows.Forms.Button _btnCRLFTest;
+        private System.Windows.Forms.CheckBox _chkCrawlSites;
+        private System.Windows.Forms.Button _buttonCSPTest;
     }
 }
 

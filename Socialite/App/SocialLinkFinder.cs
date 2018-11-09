@@ -13,6 +13,16 @@ namespace Socialite.App
 {
     public class SocialLinkFinder
     {
+        public static List<string> Ignore = new List<string>(){ "www.facebook.com/buzzfeedobsessed", 
+                                                                "www.facebook.com/buzzfeedsports",
+                                                                "www.facebook.com/buzzfeedella",
+                                                                "www.facebook.com/buzzfeedkeith",
+                                                                "www.facebook.com/buzzfeedzach",
+                                                                "www.facebook.com/buzzfeedeugene",
+                                                                "www.facebook.com/buzzfeedweddings",
+                                                                "facebook.com/buzzfeedandrew",
+                                                                "www.instagram.com/buzzfeedstyle"};
+
         public static Dictionary<string, string> Find(string body, string url, List<string> userNames, List<DomainData> socialDomains, bool returnOnlyNone200=true)
         {
             Dictionary<string, string> foundUrls = new Dictionary<string, string>();
@@ -29,7 +39,6 @@ namespace Socialite.App
                     {
                         if (!foundUrls.ContainsKey(foundURL))
                         {
-           
                             Request request = new Request(DomainUtility.EnsureHTTPS(foundURL));
                             RequestUtility.GetWebText(request);
                             if (!request.Response.Code.Equals("200"))
@@ -46,6 +55,9 @@ namespace Socialite.App
                             {
                                 if (!foundUrls.ContainsKey(foundURL))
                                 {
+                                    if (Ignore.Contains(foundURL.ToLower()))
+                                        continue;
+
                                     Request request = new Request(DomainUtility.EnsureHTTPS(foundURL));
                                     RequestUtility.GetWebText(request);
                                     if (!request.Response.Code.Equals("200"))

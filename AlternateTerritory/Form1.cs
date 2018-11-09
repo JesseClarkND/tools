@@ -75,7 +75,7 @@ namespace AlternateTerritory
             foreach (string domain in domains)
             {
                 //string domain = domainItem.DomainName;
-
+                //_chkCrawlSites
                 Log("========================");
                 Log("Starting " + domain + " at "+DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString());
                 Log("========================");
@@ -198,17 +198,17 @@ namespace AlternateTerritory
                 }
 
                 //CheckForFileType(request.Address, sb, "swf", linkBuilder);
-                result = CheckForFileType(request.Address, sb, "php", linkBuilder);
-                if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+                //result = CheckForFileType(request.Address, sb, "php", linkBuilder);
+                //if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
 
-                result = CheckForFileType(request.Address, sb, "xml", linkBuilder);
-                if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+                //result = CheckForFileType(request.Address, sb, "xml", linkBuilder);
+                //if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
 
-                result = CheckForFileType(request.Address, sb, "conf", linkBuilder);
-                if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+                //result = CheckForFileType(request.Address, sb, "conf", linkBuilder);
+                //if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
 
-                result = CheckForFileType(request.Address, sb, "env", linkBuilder);
-                if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+                //result = CheckForFileType(request.Address, sb, "env", linkBuilder);
+                //if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
 
                 result = CheckPHPInfo(sRequest, sb, linkBuilder);
                 if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
@@ -217,6 +217,9 @@ namespace AlternateTerritory
                 if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
 
                 result = CheckCRLF(sRequest, sb, linkBuilder);
+                if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                result = CheckCSP(sRequest, sb, linkBuilder);
                 if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
             }
             catch (Exception ex)
@@ -475,6 +478,27 @@ namespace AlternateTerritory
             else
             {
                 sb.Append("\tNo CRLF found." + Environment.NewLine);
+            }
+
+            return result;
+        }
+
+        private ScannerResult CheckCSP(ScannerRequest request, StringBuilder sb, StringBuilder linkBuilder = null)
+        {
+            ScannerResult result = ContentSecurityPolicy.Check(request);
+
+            if (result.Success)
+            {
+                sb.Append("\tCSP Vulnerability Found! " + request.URL + "! Email sent." + result.Results.First());
+                SendEmail("\tCSP Vulnerability Found ", request.URL + " appears to have unclaimed CSP URLS: " + Environment.NewLine + result.Results.First());
+                if (linkBuilder != null)
+                {
+                    linkBuilder.Append(String.Join(Environment.NewLine, result.Results.ToArray()) + Environment.NewLine);
+                }
+            }
+            else
+            {
+                sb.Append("\tNo CSP found." + Environment.NewLine);
             }
 
             return result;
@@ -892,6 +916,30 @@ namespace AlternateTerritory
             LogTest(sb.ToString());
         }
 
+        private void _buttonCSPTest_Click(object sender, EventArgs e)
+        {
+            string address = _txtDomain.Text;
+            StringBuilder sb = new StringBuilder();
+            try
+            {
+                sb.Append("Starting CSP Check: " + address + Environment.NewLine);
+
+                ScannerRequest sRequest = new ScannerRequest();
+                sRequest.URL = address;
+                sRequest.Domain = DomainUtility.GetDomainFromUrl(address);
+
+                CheckCSP(sRequest, sb);
+
+            }
+            catch (Exception ex)
+            {
+                string inner = "";
+                if (ex.InnerException != null)
+                    inner = ex.InnerException.Message;
+                sb.Append("!!!!!Exception: " + ex.Message + " Inner: " + inner);
+            }
+            LogTest(sb.ToString());
+        }
         #endregion
 
         #region Test Subdomain

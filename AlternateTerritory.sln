@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clark.Domain.Data", "..\com
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.MySQL.Accessor", "..\Core\Core.MySQL\Core.MySQL.Accessor\Core.MySQL.Accessor.csproj", "{B660952F-F570-4B20-BD5F-F3B600DD0F55}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clark.Crawler2", "..\utilities\Clark.Crawler2\Clark.Crawler2.csproj", "{23A2A535-560E-4AA8-BEBB-DFC013655F19}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{B660952F-F570-4B20-BD5F-F3B600DD0F55}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B660952F-F570-4B20-BD5F-F3B600DD0F55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B660952F-F570-4B20-BD5F-F3B600DD0F55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23A2A535-560E-4AA8-BEBB-DFC013655F19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23A2A535-560E-4AA8-BEBB-DFC013655F19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23A2A535-560E-4AA8-BEBB-DFC013655F19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23A2A535-560E-4AA8-BEBB-DFC013655F19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,5 +82,6 @@ Global
 		{0FBCA027-5DD6-46E6-8E09-9F467CE35CBB} = {FC64810E-1F99-4D72-B611-E01EE7DEA1BC}
 		{77EF616A-2DEF-4048-B188-1187C49C596F} = {FC64810E-1F99-4D72-B611-E01EE7DEA1BC}
 		{B660952F-F570-4B20-BD5F-F3B600DD0F55} = {FC64810E-1F99-4D72-B611-E01EE7DEA1BC}
+		{23A2A535-560E-4AA8-BEBB-DFC013655F19} = {FC64810E-1F99-4D72-B611-E01EE7DEA1BC}
 	EndGlobalSection
 EndGlobal
