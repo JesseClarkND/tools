@@ -31,7 +31,7 @@ namespace AlternateTerritory
 {
     public partial class Form1 : Form
     {
-        private static int _threadCount=20;
+        private static int _threadCount=50;
         private static CountdownEvent _countdown;
 
         public Form1()
@@ -46,7 +46,7 @@ namespace AlternateTerritory
 
         private void Log(string log)
         {
-            TextFileLogger.Log(Settings.LogDir, DateTime.Now.ToString("yyyy-MM-dd") + ".txt", log); 
+            TextFileLogger.Log(Settings.LogDir, DateTime.Now.ToString("yyyy-MM-dd") + ".txt", DateTime.Now + "-" + log); 
         }
 
         private void LogLinks(string log)
@@ -87,7 +87,7 @@ namespace AlternateTerritory
 
                 List<string> subDomains = new List<string>();
 
-                if (System.IO.File.GetLastWriteTime(existingFile) > DateTime.Now.AddDays(-7) && knownSubdomains.Count != 0)
+                if (System.IO.File.GetLastWriteTime(existingFile) > DateTime.Now.AddDays(-60) && knownSubdomains.Count != 0)
                 {
                     subDomains = knownSubdomains;
                     Log("Subdomains loaded from file: " + subDomains.Count);
@@ -106,6 +106,7 @@ namespace AlternateTerritory
                     TextFileLogger.WriteOverwriteFile(Settings.ExistingDir, domain.Replace(".", "") + ".txt", subDomains);
                 }
 
+                subDomains.Insert(0, domain);
                 List<string> chunked = new List<string>();
                 foreach (List<string> subDomainChunk in subDomains.ChunkBy(_threadCount))
                 {
@@ -140,87 +141,102 @@ namespace AlternateTerritory
             StringBuilder linkBuilder = new StringBuilder();
             try
             {
-                sb.Append("Checking: " + address + Environment.NewLine);
-                WebPageRequest request = new WebPageRequest();
-                request.Address = address;
+                List<string> schemas = new List<string>();
+                schemas.Add("http");
+                schemas.Add("https");
 
-                WebPageLoader.Load(request);
-
-                ScannerRequest sRequest = new ScannerRequest();
-                sRequest.Body = request.Response.Body;
-                sRequest.URL = address;
-                sRequest.Domain = DomainUtility.GetDomainFromUrl(address);
-
-                ScannerResult result = new ScannerResult();
-                ScannerContext scannerContext = new ScannerContext();
-
-
-                if (request.Response.Body.Equals(String.Empty) && request.Response.TimeOut == false)
+                foreach(var schema in schemas)
                 {
-                    sb.Append("\tNo body found." + Environment.NewLine);
-                }
-                else
-                {
-                    if (request.Response.TimeOut == false)
+                    if (schema.Equals("http"))
+                        address = DomainUtility.EnsureHTTP(address);
+                    else
+                        address = DomainUtility.EnsureHTTPS(address);
+
+                    sb.Append("Checking: " + address + Environment.NewLine);
+                    WebPageRequest request = new WebPageRequest();
+                    request.Address = address;
+
+                    WebPageLoader.Load(request);
+
+                    ScannerRequest sRequest = new ScannerRequest();
+                    sRequest.Body = request.Response.Body;
+                    sRequest.URL = address;
+                    sRequest.Domain = DomainUtility.GetDomainFromUrl(address);
+
+                    ScannerResult result = new ScannerResult();
+                    ScannerContext scannerContext = new ScannerContext();
+
+
+                    if (request.Response.Body.Equals(String.Empty) && request.Response.TimeOut == false)
                     {
-                        result = CheckEngine(sRequest, sb, linkBuilder);
-                        if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
-
-                        result = CheckBuckets(sRequest, sb, linkBuilder);
-                        if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
-
-                        result = CheckSocialMedia(sRequest, sb, linkBuilder);
-                        if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
-
-                        result = CheckServices(sRequest, sb, linkBuilder);
-                        if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
-
-                        result = CheckDefaultpages(sRequest, sb, linkBuilder);
-                        if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
-
-                        result = CheckIndexOf(sRequest, sb, linkBuilder);
-                        if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
-
-                        foreach (var script in request.Response.Scripts)
-                        {
-                            ScannerRequest scriptRequest = new ScannerRequest();
-                            scriptRequest.Body = script.Value;
-                            scriptRequest.URL = script.Key;
-
-                            result = CheckBuckets(scriptRequest, sb, linkBuilder);
-                            if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
-                        }
+                        sb.Append("\tNo body found." + Environment.NewLine);
                     }
                     else
                     {
-                        // CheckBigIPService(request, sb);
+                        if (request.Response.TimeOut == false)
+                        {
+                            result = CheckEngine(sRequest, sb, linkBuilder);
+                            if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                            result = CheckBuckets(sRequest, sb, linkBuilder);
+                            if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                            result = CheckSocialMedia(sRequest, sb, linkBuilder);
+                            if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                            result = CheckServices(sRequest, sb, linkBuilder);
+                            if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                            result = CheckDefaultpages(sRequest, sb, linkBuilder);
+                            if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                            result = CheckIndexOf(sRequest, sb, linkBuilder);
+                            if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                            foreach (var script in request.Response.Scripts)
+                            {
+                                ScannerRequest scriptRequest = new ScannerRequest();
+                                scriptRequest.Body = script.Value;
+                                scriptRequest.URL = script.Key;
+
+                                result = CheckBuckets(scriptRequest, sb, linkBuilder);
+                                if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+                            }
+                        }
+                        else
+                        {
+                            // CheckBigIPService(request, sb);
+                        }
                     }
+
+                    //CheckForFileType(request.Address, sb, "swf", linkBuilder);
+                    //result = CheckForFileType(request.Address, sb, "php", linkBuilder);
+                    //if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                    //result = CheckForFileType(request.Address, sb, "xml", linkBuilder);
+                    //if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                    //result = CheckForFileType(request.Address, sb, "conf", linkBuilder);
+                    //if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                    //result = CheckForFileType(request.Address, sb, "env", linkBuilder);
+                    //if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                    result = CheckPHPInfo(sRequest, sb, linkBuilder);
+                    if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                    result = CheckKnownAttackFiles(sRequest, sb, linkBuilder);
+                    if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                    result = CheckCRLF(sRequest, sb, linkBuilder);
+                    if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                    result = CheckCSP(sRequest, sb, linkBuilder);
+                    if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
+
+                    result = CheckHeaders(sRequest, sb);
+                    if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
                 }
-
-                //CheckForFileType(request.Address, sb, "swf", linkBuilder);
-                //result = CheckForFileType(request.Address, sb, "php", linkBuilder);
-                //if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
-
-                //result = CheckForFileType(request.Address, sb, "xml", linkBuilder);
-                //if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
-
-                //result = CheckForFileType(request.Address, sb, "conf", linkBuilder);
-                //if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
-
-                //result = CheckForFileType(request.Address, sb, "env", linkBuilder);
-                //if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
-
-                result = CheckPHPInfo(sRequest, sb, linkBuilder);
-                if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
-
-                result = CheckKnownAttackFiles(sRequest, sb, linkBuilder);
-                if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
-
-                result = CheckCRLF(sRequest, sb, linkBuilder);
-                if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
-
-                result = CheckCSP(sRequest, sb, linkBuilder);
-                if (result.Success) { scannerContext.FoundVulnerabilities.Add(new Vulnerability() { URL = "", Results = result.Results }); }
             }
             catch (Exception ex)
             {
@@ -234,6 +250,7 @@ namespace AlternateTerritory
             
             if(signalEnd)
                 _countdown.Signal();
+
         }
 
 
@@ -300,6 +317,28 @@ namespace AlternateTerritory
             else
             {
                 sb.Append("\tNo Unclaimed S3 buckets found." + Environment.NewLine);
+            }
+
+            return result;
+        }
+
+        private ScannerResult CheckHeaders(ScannerRequest request, StringBuilder sb, StringBuilder linkBuilder = null)
+        {
+            request.LogDir = Settings.LogDir;
+            ScannerResult result = Headers.Check(request);
+
+            if (result.Success)
+            {
+                sb.Append("\tHeader attacks found! " + String.Join(", " + Environment.NewLine, result.Results.ToArray()) + "! Email sent." + Environment.NewLine);
+                SendEmail("Header attacks found", request.URL + " appears to be vulnerable to header attacks " + String.Join(Environment.NewLine, result.Results.ToArray()));
+                if (linkBuilder != null)
+                {
+                    linkBuilder.Append(String.Join(Environment.NewLine, result.Results.ToArray()) + Environment.NewLine);
+                }
+            }
+            else
+            {
+                sb.Append("\tNo header attacks found." + Environment.NewLine);
             }
 
             return result;
@@ -506,6 +545,30 @@ namespace AlternateTerritory
         #endregion
 
         #region Testing Buttons
+        private void _btnHeadersTest_Click(object sender, EventArgs e)
+        {
+            string address = _txtDomain.Text;
+            StringBuilder sb = new StringBuilder();
+            try
+            {
+                sb.Append("Starting Headers Test : " + address + Environment.NewLine);
+                ScannerRequest sRequest = new ScannerRequest();
+                sRequest.URL = address;
+                sRequest.Domain = DomainUtility.GetDomainFromUrl(address);
+                sRequest.LogDir = Settings.LogDir;
+
+                CheckHeaders(sRequest, sb);
+            }
+            catch (Exception ex)
+            {
+                string inner = "";
+                if (ex.InnerException != null)
+                    inner = ex.InnerException.Message;
+                sb.Append("!!!!!Exception: " + ex.Message + " Inner: " + inner);
+            }
+            LogTest(sb.ToString());
+        }
+
         private void _btnS3Test_Click(object sender, EventArgs e)
         {
             //http://blackdoorsec.net/s3.html

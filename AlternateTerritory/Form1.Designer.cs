@@ -48,6 +48,7 @@
             this._btnCRLFTest = new System.Windows.Forms.Button();
             this._chkCrawlSites = new System.Windows.Forms.CheckBox();
             this._buttonCSPTest = new System.Windows.Forms.Button();
+            this._btnHeadersTest = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // _btnStart
@@ -237,7 +238,7 @@
             // 
             // _buttonCSPTest
             // 
-            this._buttonCSPTest.Location = new System.Drawing.Point(22, 312);
+            this._buttonCSPTest.Location = new System.Drawing.Point(24, 312);
             this._buttonCSPTest.Name = "_buttonCSPTest";
             this._buttonCSPTest.Size = new System.Drawing.Size(88, 47);
             this._buttonCSPTest.TabIndex = 19;
@@ -245,11 +246,22 @@
             this._buttonCSPTest.UseVisualStyleBackColor = true;
             this._buttonCSPTest.Click += new System.EventHandler(this._buttonCSPTest_Click);
             // 
+            // _btnHeadersTest
+            // 
+            this._btnHeadersTest.Location = new System.Drawing.Point(118, 312);
+            this._btnHeadersTest.Name = "_btnHeadersTest";
+            this._btnHeadersTest.Size = new System.Drawing.Size(88, 47);
+            this._btnHeadersTest.TabIndex = 20;
+            this._btnHeadersTest.Text = "Headers";
+            this._btnHeadersTest.UseVisualStyleBackColor = true;
+            this._btnHeadersTest.Click += new System.EventHandler(this._btnHeadersTest_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1028, 455);
+            this.Controls.Add(this._btnHeadersTest);
             this.Controls.Add(this._buttonCSPTest);
             this.Controls.Add(this._chkCrawlSites);
             this.Controls.Add(this._btnCRLFTest);
@@ -300,6 +312,7 @@
         private System.Windows.Forms.Button _btnCRLFTest;
         private System.Windows.Forms.CheckBox _chkCrawlSites;
         private System.Windows.Forms.Button _buttonCSPTest;
+        private System.Windows.Forms.Button _btnHeadersTest;
     }
 }
 

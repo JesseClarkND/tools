@@ -41,7 +41,7 @@ namespace Socialite.App
                         {
                             Request request = new Request(DomainUtility.EnsureHTTPS(foundURL));
                             RequestUtility.GetWebText(request);
-                            if (!request.Response.Code.Equals("200"))
+                            if (!request.Response.Code.Equals("200") || request.Url.Contains("buymethat"))
                                 foundUrls.Add(foundURL, url);
                             else if(!returnOnlyNone200)
                                 foundUrls.Add(foundURL, url);
@@ -60,7 +60,7 @@ namespace Socialite.App
 
                                     Request request = new Request(DomainUtility.EnsureHTTPS(foundURL));
                                     RequestUtility.GetWebText(request);
-                                    if (!request.Response.Code.Equals("200"))
+                                    if (!request.Response.Code.Equals("200") || request.Url.Contains("buymethat"))
                                         foundUrls.Add(foundURL, url);
                                     else if (!returnOnlyNone200)
                                         foundUrls.Add(foundURL, url);
