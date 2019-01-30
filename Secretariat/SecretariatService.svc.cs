@@ -69,6 +69,9 @@ namespace Secretariat
                     attacks.Add(new Clark.Attack.SocialMedia.Processor());
                     attacks.Add(new Clark.Attack.InformationLeak.Processor());
                     attacks.Add(new Clark.Attack.CRLF.Processor());
+                    attacks.Add(new Clark.Attack.VulnerableFiles.Processor());
+                    attacks.Add(new Clark.Attack.HTTPHeader.Processor());
+                    attacks.Add(new Clark.Attack.CSP.Processor());
 
                     WebPageRequest request = new WebPageRequest();
                     request.Address = url;
@@ -78,6 +81,7 @@ namespace Secretariat
                     sRequest.Body = request.Response.Body;
                     sRequest.URL = url;
                     sRequest.Domain = DomainUtility.GetDomainFromUrl(url);
+                    sRequest.LogDir = Settings.LogDir;
 
                     _countdown = new CountdownEvent(attacks.Count);
                     List<Thread> lstThreads = new List<Thread>();
