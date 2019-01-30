@@ -1,2 +1,11 @@
 C:\Users\hogarth45\Documents\Programming\tools\Reiner\Reiner\bin\Debug\Reiner.exe.config
 C:\Users\hogarth45\Documents\Programming\tools\Reiner\bin\Debug\Reiner.exe.config
+C:\Users\hogarth45\Documents\Programming\tools\Reiner\bin\Debug\Reiner.exe
+C:\Users\hogarth45\Documents\Programming\tools\Reiner\bin\Debug\Reiner.pdb
+C:\Users\hogarth45\Documents\Programming\tools\Reiner\obj\Debug\Reiner.csprojResolveAssemblyReference.cache
+C:\Users\hogarth45\Documents\Programming\tools\Reiner\obj\Debug\Reiner.Reiner.resources
+C:\Users\hogarth45\Documents\Programming\tools\Reiner\obj\Debug\Reiner.Properties.Resources.resources
+C:\Users\hogarth45\Documents\Programming\tools\Reiner\obj\Debug\Reiner.csproj.GenerateResource.Cache
+C:\Users\hogarth45\Documents\Programming\tools\Reiner\obj\Debug\Reiner.exe
+C:\Users\hogarth45\Documents\Programming\tools\Reiner\obj\Debug\Reiner.pdb
+C:\Users\hogarth45\Documents\Programming\tools\Reiner\obj\Debug\Reiner.Subforms.frmURLBatches.resources
