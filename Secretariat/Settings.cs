@@ -29,17 +29,6 @@ namespace Secretariat
                 return _logDir;
             }
         }
-        public static string SourceFile
-        {
-            get
-            {
-                if (String.IsNullOrEmpty(_sourceFile))
-                {
-                    Initilize();
-                }
-                return _sourceFile;
-            }
-        }
         public static string ExistingDir
         {
             get
@@ -111,18 +100,6 @@ namespace Secretariat
             }
         }
 
-        public static string InterstingURLs
-        {
-            get
-            {
-                if (String.IsNullOrEmpty(_urlsOfInterest))
-                {
-                    Initilize();
-                }
-                return _urlsOfInterest;
-            }
-        }
-
         private static void Initilize()
         {
             XmlDocument doc = new XmlDocument();
@@ -137,9 +114,6 @@ namespace Secretariat
             node = doc.DocumentElement.SelectSingleNode("/root/Existing");
             _existingDir = node.InnerText;
 
-            node = doc.DocumentElement.SelectSingleNode("/root/Source");
-            _sourceFile = node.InnerText;
-
             node = doc.DocumentElement.SelectSingleNode("/root/Email");
             _email = node.InnerText;
 
@@ -151,9 +125,6 @@ namespace Secretariat
 
             node = doc.DocumentElement.SelectSingleNode("/root/VirusTotalAPI");
             _virsutTotalAPI = node.InnerText;
-
-            node = doc.DocumentElement.SelectSingleNode("/root/InterestingURL");
-            _urlsOfInterest = node.InnerText;
 
         }
     }

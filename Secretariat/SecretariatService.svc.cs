@@ -20,15 +20,37 @@ namespace Secretariat
     public class SecretariatService : ISecretariatService
     {
         private static CountdownEvent _countdown;
+        private static string _url = "N/A";
+        private static DateTime _started = DateTime.MaxValue;
+        private static string _status = "Idle";
+
 
         public string CheckConnection()
         {
             return "Ack";
         }
 
+        public string CheckLastURL()
+        {
+            return _url;
+        }
+
+        public string CheckStatus()
+        {
+            return _status;
+        }
+
+        public string CheckStartTime()
+        {
+            return _started.ToString();
+        }
+
         public string TestURL(string url)
         {
-            var urlsToTest = new List<string>(){url};
+            _started = DateTime.Now;
+            _status = "Working";
+
+            var urlsToTest = new List<string>(){url.Trim(new char[]{'*','.'})};
 
             Log("========================");
             Log("Starting " + url + " at " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString());
@@ -40,11 +62,20 @@ namespace Secretariat
             }
 
             //threads
+            foreach (var earl in urlsToTest)
+            {
+                _url = earl;
+
+                Test(earl);
+            }
+
+            _started = DateTime.MaxValue;
+            _status = "Idle";
 
             return "";
         }
 
-        private void TestURL(string url)
+        private void Test(string url)
         {
             StringBuilder sb = new StringBuilder();
             try
@@ -60,8 +91,11 @@ namespace Secretariat
                     else
                         url = DomainUtility.EnsureHTTPS(url);
 
-                    sb.Append("Checking: " + url + Environment.NewLine);
-
+                    sb.Append(Environment.NewLine);
+                    sb.Append(Environment.NewLine);
+                    sb.Append(DateTime.Now.ToString());
+                    sb.Append(" Checking: " + url + Environment.NewLine);
+                    sb.Append("------------------");
                     List<IAttack> attacks = new List<IAttack>();
 
                     //Future: Auto detect dlls
@@ -72,6 +106,9 @@ namespace Secretariat
                     attacks.Add(new Clark.Attack.VulnerableFiles.Processor());
                     attacks.Add(new Clark.Attack.HTTPHeader.Processor());
                     attacks.Add(new Clark.Attack.CSP.Processor());
+                    attacks.Add(new Clark.Attack.HTTPResponse.Processor());
+                    attacks.Add(new Clark.Attack.FileUpload.Processor());
+                    attacks.Add(new Clark.Attack.Redirect.Processor());
 
                     WebPageRequest request = new WebPageRequest();
                     request.Address = url;
@@ -87,7 +124,7 @@ namespace Secretariat
                     List<Thread> lstThreads = new List<Thread>();
                     foreach (var attack in attacks)
                     {
-                        Thread th = new Thread(() => { ExecuteAttack(attack, sRequest, sb) });
+                        Thread th = new Thread(() => { sb.Append(Environment.NewLine + ExecuteAttack(attack, sRequest)); });
                         lstThreads.Add(th);
                     }
 
@@ -103,28 +140,47 @@ namespace Secretariat
                 if (ex.InnerException != null)
                     inner = ex.InnerException.Message;
                 sb.Append("!!!!!Exception: " + ex.Message + " Inner: " + inner + " Stack: " + ex.StackTrace);
+                LogError("!!!!!Exception: " + ex.Message + " Inner: " + inner + " Stack: " + ex.StackTrace);
             }
 
             Log(sb.ToString());
 
-            _countdown.Signal();
+
         }
 
-        private void ExecuteAttack(IAttack attack, AttackRequest sRequest, StringBuilder sb)
+        private string ExecuteAttack(IAttack attack, AttackRequest sRequest)
         {
-            var sResult = attack.Check(sRequest);
+            StringBuilder sb = new StringBuilder();
+            try
+            {
+                var sResult = attack.Check(sRequest);
 
-            if (sResult.Success)
-            {
-                string msg = "Vulnerability Found: " + String.Join(Environment.NewLine, sResult.Results.ToArray());
-                sb.Append(msg);
-                SendEmail(attack.Name, msg);
+                if (sResult.Success)
+                {
+                    string msg = sRequest.URL + Environment.NewLine;
+                    msg += "Vulnerability Found: " + String.Join(Environment.NewLine, sResult.Results.ToArray());
+                    sb.Append(msg);
+                    SendEmail(attack.Name, msg);
+                }
+                else
+                {
+                    sb.Append(attack.Name);
+                    sb.Append(" failed to find a vulnerability.");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                sb.Append(attack.Name);
-                sb.Append(" failed to find a vulnerability.");
+                sb.Append("Exception: ");
+                sb.Append(ex.Message);
+                if (ex.InnerException != null)
+                    sb.Append(" " + ex.InnerException.Message);
+                sb.Append("ST: " + ex.StackTrace);
             }
+            finally
+            {
+                _countdown.Signal();
+            }
+            return sb.ToString();
         }
 
         private static void SendEmail(string subject, string body)
@@ -140,18 +196,24 @@ namespace Secretariat
             TextFileLogger.Log(Settings.LogDir, DateTime.Now.ToString("yyyy-MM-dd") + ".txt", DateTime.Now + "-" + log);
         }
 
+        private void LogError(string log)
+        {
+            TextFileLogger.Log(Settings.LogDir, DateTime.Now.ToString("yyyy-MM-dd") + "-Error.txt", DateTime.Now + "-" + log);
+        }
+
         private List<string> LoadSubdomains(string url)
         {
+            string testUrl = url.Trim(new char[]{'*','.'});
             var subDomains = new List<string>();
 
             //This will have to get moved to a central db
             List<string> knownSubdomains = new List<string>();
-            string existingFile = Path.Combine(Settings.ExistingDir, url.Replace(".", "") + ".txt");
+            string existingFile = Path.Combine(Settings.ExistingDir, testUrl.Replace(".", "") + ".txt");
             if (File.Exists(existingFile))
                 knownSubdomains = File.ReadAllLines(existingFile).ToList();
 
             HunterRequest request = new HunterRequest();
-            request.Domain = url;
+            request.Domain = testUrl;
             request.KnownSubdomains = knownSubdomains;
             request.SecurityTrailsAPIKey = Settings.SecurityTrailsAPI;
             request.VirusTotalAPIKey = Settings.VirusTotalAPI;
@@ -159,7 +221,7 @@ namespace Secretariat
             subDomains = Hunter.GatherAll(request);
 
             Log("Subdomains found: " + subDomains.Count);
-            TextFileLogger.WriteOverwriteFile(Settings.ExistingDir, url.Replace(".", "") + ".txt", subDomains);
+            TextFileLogger.WriteOverwriteFile(Settings.ExistingDir, testUrl.Replace(".", "") + ".txt", subDomains);
 
             return subDomains;
         }

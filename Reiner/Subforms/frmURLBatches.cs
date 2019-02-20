@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Reiner.Utilities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -22,9 +23,9 @@ namespace Reiner.Subforms
 
         private void frmURLBatches_Load(object sender, EventArgs e)
         {
-            foreach (string file in Directory.EnumerateFiles(Settings.URLBatch, "*.txt"))
+            foreach (string file in URLBatchUtility.LoadBatchNames())
             {
-                _existingFiles.Add(Path.GetFileNameWithoutExtension(file));
+                _existingFiles.Add(file);
             }
 
             UpdateFileSelect();
@@ -33,7 +34,7 @@ namespace Reiner.Subforms
         private void _ddlBatches_SelectedIndexChanged(object sender, EventArgs e)
         {
             _lstURL.Items.Clear();
-            foreach (var item in LoadRows(_ddlBatches.SelectedItem.ToString()))
+            foreach (var item in URLBatchUtility.LoadURLsFromBatch(_ddlBatches.SelectedItem.ToString()))
             {
                 if(!String.IsNullOrEmpty(item)){
                     _lstURL.Items.Add(item);
@@ -156,12 +157,6 @@ namespace Reiner.Subforms
             {
                 _ddlBatches.Items.Add(file);
             }
-        }
-
-        private List<string> LoadRows(string fileName)
-        {
-            string[] contents = File.ReadAllLines(Path.Combine(Settings.URLBatch, fileName + ".txt"));
-            return contents.ToList();
         }
     }
 }

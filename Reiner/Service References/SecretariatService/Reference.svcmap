@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="6f7ba7a2-e52e-41b0-a59e-f8ab4e7d0229" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="b9d53fa1-2cb7-4817-a1f2-f5f91a8268ff" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
     <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
     <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
@@ -22,10 +22,10 @@
     <MetadataSource Address="http://localhost:22884/SecretariatService.svc" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="SecretariatService.disco" MetadataType="Disco" ID="78dcd881-4757-4308-98df-bfcaaf4bf217" SourceId="1" SourceUrl="http://localhost:22884/SecretariatService.svc?disco" />
-    <MetadataFile FileName="SecretariatService.wsdl" MetadataType="Wsdl" ID="6edf956f-6427-4c17-b9a4-38703d05e7b6" SourceId="1" SourceUrl="http://localhost:22884/SecretariatService.svc?wsdl" />
-    <MetadataFile FileName="SecretariatService.xsd" MetadataType="Schema" ID="b6171429-cad6-4266-853d-2f7de24d2de7" SourceId="1" SourceUrl="http://localhost:22884/SecretariatService.svc?xsd=xsd1" />
-    <MetadataFile FileName="SecretariatService1.xsd" MetadataType="Schema" ID="b9bbf0f8-dd10-4edd-8957-f1eb0f3a7703" SourceId="1" SourceUrl="http://localhost:22884/SecretariatService.svc?xsd=xsd0" />
+    <MetadataFile FileName="SecretariatService.disco" MetadataType="Disco" ID="8df6d6bd-4c23-4b86-ba91-7c8c6f81ec4a" SourceId="1" SourceUrl="http://localhost:22884/SecretariatService.svc?disco" />
+    <MetadataFile FileName="SecretariatService.wsdl" MetadataType="Wsdl" ID="17092e0c-c937-41bb-9e78-6aa6773a6526" SourceId="1" SourceUrl="http://localhost:22884/SecretariatService.svc?wsdl" />
+    <MetadataFile FileName="SecretariatService.xsd" MetadataType="Schema" ID="ae54ec6c-bd2d-499a-8ade-7d6ddcbd9157" SourceId="1" SourceUrl="http://localhost:22884/SecretariatService.svc?xsd=xsd1" />
+    <MetadataFile FileName="SecretariatService1.xsd" MetadataType="Schema" ID="c0e21423-b604-4df3-9c46-8e1f69b7ec4b" SourceId="1" SourceUrl="http://localhost:22884/SecretariatService.svc?xsd=xsd0" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

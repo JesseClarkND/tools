@@ -11,6 +11,21 @@
     <AssemblyName>Reiner</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -32,6 +47,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
@@ -54,7 +71,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service References\AttackServiceRefernce\Reference.cs">
+    <Compile Include="Service References\SecretariatService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
@@ -67,6 +84,7 @@
       <DependentUpon>frmURLBatches.cs</DependentUpon>
     </Compile>
     <Compile Include="Utilities\URLBatchUtility.cs" />
+    <Compile Include="WCFClientHelper.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -91,11 +109,11 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Service References\AttackServiceRefernce\SecretariatService.wsdl" />
-    <None Include="Service References\AttackServiceRefernce\SecretariatService.xsd">
+    <None Include="Service References\SecretariatService\SecretariatService.wsdl" />
+    <None Include="Service References\SecretariatService\SecretariatService.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\AttackServiceRefernce\SecretariatService1.xsd">
+    <None Include="Service References\SecretariatService\SecretariatService1.xsd">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
@@ -106,19 +124,42 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadataStorage Include="Service References\AttackServiceRefernce\" />
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\AttackServiceRefernce\SecretariatService.disco" />
+    <ProjectReference Include="..\Secretariat\Secretariat.csproj">
+      <Project>{2f7f877d-2071-44bf-8a13-e4443b75ed05}</Project>
+      <Name>Secretariat</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\AttackServiceRefernce\configuration91.svcinfo" />
+    <WCFMetadataStorage Include="Service References\SecretariatService\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\AttackServiceRefernce\configuration.svcinfo" />
+    <None Include="Service References\SecretariatService\SecretariatService.disco" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\AttackServiceRefernce\Reference.svcmap">
+    <None Include="Service References\SecretariatService\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\SecretariatService\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\SecretariatService\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>

@@ -8,11 +8,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Reiner.AttackServiceRefernce {
+namespace Reiner.SecretariatService {
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="AttackServiceRefernce.ISecretariatService")]
+    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="SecretariatService.ISecretariatService")]
     public interface ISecretariatService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISecretariatService/CheckConnection", ReplyAction="http://tempuri.org/ISecretariatService/CheckConnectionResponse")]
@@ -20,6 +20,24 @@ namespace Reiner.AttackServiceRefernce {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISecretariatService/CheckConnection", ReplyAction="http://tempuri.org/ISecretariatService/CheckConnectionResponse")]
         System.Threading.Tasks.Task<string> CheckConnectionAsync();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISecretariatService/CheckLastURL", ReplyAction="http://tempuri.org/ISecretariatService/CheckLastURLResponse")]
+        string CheckLastURL();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISecretariatService/CheckLastURL", ReplyAction="http://tempuri.org/ISecretariatService/CheckLastURLResponse")]
+        System.Threading.Tasks.Task<string> CheckLastURLAsync();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISecretariatService/CheckStatus", ReplyAction="http://tempuri.org/ISecretariatService/CheckStatusResponse")]
+        string CheckStatus();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISecretariatService/CheckStatus", ReplyAction="http://tempuri.org/ISecretariatService/CheckStatusResponse")]
+        System.Threading.Tasks.Task<string> CheckStatusAsync();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISecretariatService/CheckStartTime", ReplyAction="http://tempuri.org/ISecretariatService/CheckStartTimeResponse")]
+        string CheckStartTime();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISecretariatService/CheckStartTime", ReplyAction="http://tempuri.org/ISecretariatService/CheckStartTimeResponse")]
+        System.Threading.Tasks.Task<string> CheckStartTimeAsync();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISecretariatService/TestURL", ReplyAction="http://tempuri.org/ISecretariatService/TestURLResponse")]
         string TestURL(string url);
@@ -29,12 +47,12 @@ namespace Reiner.AttackServiceRefernce {
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface ISecretariatServiceChannel : Reiner.AttackServiceRefernce.ISecretariatService, System.ServiceModel.IClientChannel {
+    public interface ISecretariatServiceChannel : SecretariatService.ISecretariatService, System.ServiceModel.IClientChannel {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class SecretariatServiceClient : System.ServiceModel.ClientBase<Reiner.AttackServiceRefernce.ISecretariatService>, Reiner.AttackServiceRefernce.ISecretariatService {
+    public partial class SecretariatServiceClient : System.ServiceModel.ClientBase<SecretariatService.ISecretariatService>, SecretariatService.ISecretariatService {
         
         public SecretariatServiceClient() {
         }
@@ -61,6 +79,30 @@ namespace Reiner.AttackServiceRefernce {
         
         public System.Threading.Tasks.Task<string> CheckConnectionAsync() {
             return base.Channel.CheckConnectionAsync();
+        }
+        
+        public string CheckLastURL() {
+            return base.Channel.CheckLastURL();
+        }
+        
+        public System.Threading.Tasks.Task<string> CheckLastURLAsync() {
+            return base.Channel.CheckLastURLAsync();
+        }
+        
+        public string CheckStatus() {
+            return base.Channel.CheckStatus();
+        }
+        
+        public System.Threading.Tasks.Task<string> CheckStatusAsync() {
+            return base.Channel.CheckStatusAsync();
+        }
+        
+        public string CheckStartTime() {
+            return base.Channel.CheckStartTime();
+        }
+        
+        public System.Threading.Tasks.Task<string> CheckStartTimeAsync() {
+            return base.Channel.CheckStartTimeAsync();
         }
         
         public string TestURL(string url) {

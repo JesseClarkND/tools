@@ -16,6 +16,15 @@ namespace Secretariat
         string CheckConnection();
 
         [OperationContract]
+        string CheckLastURL();
+
+        [OperationContract]
+        string CheckStatus();
+
+        [OperationContract]
+        string CheckStartTime();
+
+        [OperationContract]
         string TestURL(string url);
     }
 }

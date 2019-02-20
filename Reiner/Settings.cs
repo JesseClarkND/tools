@@ -11,6 +11,7 @@ namespace Reiner
     {
         private static string _urlBatchDir = "";
         private static string _serverIP1 = "";
+        private static string _serverIP2 = "";
 
         public static string URLBatch
         {
@@ -36,6 +37,18 @@ namespace Reiner
             }
         }
 
+        public static string ServerIP2
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(_serverIP2))
+                {
+                    Initilize();
+                }
+                return _serverIP2;
+            }
+        }
+
         private static void Initilize()
         {
             XmlDocument doc = new XmlDocument();
@@ -46,6 +59,9 @@ namespace Reiner
 
             node = doc.DocumentElement.SelectSingleNode("/root/ServerIP1");
             _serverIP1 = node.InnerText;
+
+            node = doc.DocumentElement.SelectSingleNode("/root/ServerIP2");
+            _serverIP2 = node.InnerText;
         }
     }
 }

@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit http://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <_PublishTargetUrl>C:\Users\hogarth45\Desktop\Production</_PublishTargetUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <File Include="bin/Clark.Attack.Common.dll">
+      <publishTime>02/16/2019 00:20:12</publishTime>
+    </File>
+    <File Include="bin/Clark.Attack.ContentScanner.dll">
+      <publishTime>02/16/2019 00:20:12</publishTime>
+    </File>
+    <File Include="bin/Clark.Attack.CRLF.dll">
+      <publishTime>02/16/2019 00:20:14</publishTime>
+    </File>
+    <File Include="bin/Clark.Attack.CSP.dll">
+      <publishTime>02/16/2019 00:20:14</publishTime>
+    </File>
+    <File Include="bin/Clark.Attack.FileUpload.dll">
+      <publishTime>02/16/2019 00:20:14</publishTime>
+    </File>
+    <File Include="bin/Clark.Attack.HTTPHeader.dll">
+      <publishTime>02/16/2019 00:20:14</publishTime>
+    </File>
+    <File Include="bin/Clark.Attack.HTTPResponse.dll">
+      <publishTime>02/16/2019 00:20:13</publishTime>
+    </File>
+    <File Include="bin/Clark.Attack.InformationLeak.dll">
+      <publishTime>02/16/2019 00:20:14</publishTime>
+    </File>
+    <File Include="bin/Clark.Attack.Redirect.dll">
+      <publishTime>02/16/2019 00:20:14</publishTime>
+    </File>
+    <File Include="bin/Clark.Attack.SocialMedia.dll">
+      <publishTime>02/16/2019 00:20:14</publishTime>
+    </File>
+    <File Include="bin/Clark.Attack.VulnerableFiles.dll">
+      <publishTime>02/16/2019 00:20:14</publishTime>
+    </File>
+    <File Include="bin/Clark.Common.dll">
+      <publishTime>02/16/2019 00:20:12</publishTime>
+    </File>
+    <File Include="bin/Clark.Logger.dll">
+      <publishTime>02/16/2019 00:20:12</publishTime>
+    </File>
+    <File Include="bin/Clark.Subdomain.dll">
+      <publishTime>02/16/2019 00:20:13</publishTime>
+    </File>
+    <File Include="bin/HtmlAgilityPack.dll">
+      <publishTime>02/02/2017 01:15:10</publishTime>
+    </File>
+    <File Include="bin/Newtonsoft.Json.dll">
+      <publishTime>09/24/2018 23:41:31</publishTime>
+    </File>
+    <File Include="bin/Secretariat.dll">
+      <publishTime>02/16/2019 00:20:14</publishTime>
+    </File>
+    <File Include="SecretariatService.svc">
+      <publishTime>01/21/2019 21:28:11</publishTime>
+    </File>
+    <File Include="Web.config">
+      <publishTime>02/16/2019 00:20:15</publishTime>
+    </File>
+  </ItemGroup>
+</Project>
